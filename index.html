@@ -213,10 +213,10 @@
   .btn-cr:hover { background: var(--cr-mid); color: #fff; }
   .btn-db   { background: var(--db-light); color: var(--db); border: 1.5px solid #e88; border-radius: 7px; padding: 7px 16px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700; white-space: nowrap; }
   .btn-db:hover { background: var(--db); color: #fff; }
-  .btn-del  { background: none; border: none; cursor: pointer; color: #bbb; font-size: 14px; padding: 2px 4px; line-height: 1; border-radius: 4px; transition: color 0.15s, background 0.15s; }
-  .btn-del:hover { color: var(--db); background: var(--db-light); }
-  .btn-edit { background: none; border: none; cursor: pointer; color: #bbb; font-size: 13px; padding: 2px 4px; line-height: 1; border-radius: 4px; transition: color 0.15s, background 0.15s; }
-  .btn-edit:hover { color: var(--gold); background: var(--gold-light); }
+  .btn-del  { background: #ef4444; border: none; cursor: pointer; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 7px; line-height: 1.4; border-radius: 4px; transition: background 0.15s; }
+  .btn-del:hover { background: #b91c1c; }
+  .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); border: none; cursor: pointer; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 7px; line-height: 1.4; border-radius: 4px; transition: opacity 0.15s; }
+  .btn-edit:hover { opacity: 0.85; }
 
   /* ── PAGE SETTINGS MODAL ── */
   .ps-section { background: var(--gold-light); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
@@ -373,6 +373,9 @@
   .day-entry-row { display: grid; grid-template-columns: 1fr 130px 90px 64px; gap: 6px; padding: 8px 16px; border-bottom: 0.5px solid #e5d7b0; align-items: center; font-size: 13px; cursor: pointer; }
   .day-entry-row:hover { background: #fffae8; }
   .day-entry-row .de-name { font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .de-name-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; overflow: hidden; }
+  .de-attach-btn { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #2ea06a; background: #e6f5ed; color: #1a7a4a; cursor: pointer; white-space: nowrap; line-height: 1.6; display: inline-flex; align-items: center; gap: 2px; }
+  .de-attach-btn:hover { background: #2ea06a; color: #fff; }
   .day-entry-row .de-narr { color: var(--ink2); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .day-entry-row .de-amt  { text-align: right; font-weight: 700; }
   .day-entry-row .de-type { text-align: center; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 10px; justify-self: center; }
@@ -400,16 +403,19 @@
   .page-section-label.db { color: var(--db); background: var(--db-light); border-bottom-color: #f5aaaa; }
 
   /* entry row: date | narration + del | amount — clean 3-col grid */
-  .col-header { display: grid; grid-template-columns: 72px 1fr 88px; gap: 6px; padding: 6px 12px; background: var(--cr-light); border-bottom: 1.5px solid var(--cr-mid); font-size: 10px; font-weight: 700; color: var(--cr); text-transform: uppercase; align-items: center; }
+  .col-header { display: grid; grid-template-columns: 72px 1fr 88px 52px; gap: 4px; padding: 6px 12px; background: var(--cr-light); border-bottom: 1.5px solid var(--cr-mid); font-size: 10px; font-weight: 700; color: var(--cr); text-transform: uppercase; align-items: center; }
   .col-header.db-header { display: grid; grid-template-columns: 72px 1fr 88px 52px; gap: 4px; padding: 6px 12px; background: var(--db-light); border-bottom: 1.5px solid #e88; font-size: 10px; font-weight: 700; color: var(--db); text-transform: uppercase; align-items: center; }
-  .entry-row { display: grid; grid-template-columns: 72px 1fr 88px; gap: 6px; padding: 6px 12px; border-bottom: 0.5px solid #e5d7b0; font-size: 13px; align-items: center; }
+  .entry-row { display: grid; grid-template-columns: 72px 1fr 88px 52px; gap: 4px; padding: 6px 12px; border-bottom: 0.5px solid #e5d7b0; font-size: 13px; align-items: center; min-width: 0; }
   .entry-row.db-entry-row { display: grid; grid-template-columns: 72px 1fr 88px 52px; gap: 4px; padding: 6px 12px; border-bottom: 0.5px solid #e5d7b0; font-size: 13px; align-items: center; min-width: 0; }
   .entry-row:hover, .entry-row.db-entry-row:hover { background: #fffae8; }
+  .db-actions { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
   .days-badge { text-align: center; font-size: 11px; font-weight: 700; padding: 3px 5px; border-radius: 8px; white-space: nowrap; display: block; }
   .days-badge.days-ok   { background: #e6f5ed; color: #1a7a4a; }
   .days-badge.days-warn { background: #fff3cd; color: #92600a; }
   .days-badge.days-over { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
   .entry-row .date { color: var(--ink2); font-size: 11px; white-space: nowrap; }
+  .date-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .date-cell .date { line-height: 1.2; }
   .entry-narr-cell { display: flex; align-items: center; justify-content: space-between; gap: 4px; min-width: 0; }
   .entry-narr-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
   .entry-actions { display: inline-flex; align-items: center; flex-shrink: 0; }
@@ -455,8 +461,44 @@
   .modal-foot { display: flex; gap: 8px; padding: 12px 18px; border-top: 1px solid #e5d7b0; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
 
   /* ── SETTINGS MODAL ── */
-  .settings-section { margin-bottom: 0; background: var(--page); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-  .settings-section-title { font-size: 11px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  /* 2-column card grid layout */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .settings-section {
+    margin-bottom: 0; background: var(--page);
+    border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 0; overflow: hidden;
+  }
+  /* Full-width sections (danger, firebase, lan) */
+  .settings-section.full-width { grid-column: 1 / -1; }
+
+  .settings-section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 13px; cursor: pointer; user-select: none;
+    background: var(--page); border-radius: 12px;
+    transition: background 0.15s;
+    gap: 7px; min-height: 56px;
+  }
+  .settings-section-header:hover { background: var(--gold-light); }
+  .settings-section-header.open { border-radius: 12px 12px 0 0; border-bottom: 1px solid var(--line); background: var(--gold-light); }
+  .settings-section-header-left { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
+  .settings-section-icon { font-size: 18px; flex-shrink: 0; }
+  .settings-section-title {
+    font-size: 11.5px; font-weight: 800; color: var(--gold);
+    letter-spacing: 0.2px;
+    margin: 0; padding: 0; border: none; text-transform: none;
+    line-height: 1.35; word-break: break-word;
+  }
+  .settings-section-arrow {
+    font-size: 10px; color: var(--gold); transition: transform 0.25s; flex-shrink: 0;
+  }
+  .settings-section-header.open .settings-section-arrow { transform: rotate(180deg); }
+  .settings-section-body { display: none; padding: 13px 14px; }
+  .settings-section-body.open { display: block; }
   .lang-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
   .lang-btn { flex: 1; padding: 10px 16px; border: none; background: var(--page); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--ink2); transition: all 0.15s; }
   .lang-btn.active { background: var(--gold); color: #fff; }
@@ -685,6 +727,67 @@
   }
   .theme-swatch .swatch-label { font-size: 10px; font-weight: 700; color: var(--ink2); text-align: center; line-height: 1.3; }
 
+
+  /* ── ATTACHMENT FEATURE ── */
+  .btn-attach {
+    background: none; border: 1px solid #c8b97a; border-radius: 5px;
+    padding: 2px 5px; font-size: 13px; cursor: pointer; color: #92600a;
+    line-height: 1; white-space: nowrap; display: inline-flex; align-items: center;
+  }
+  .btn-attach:hover { background: #fdf3e0; }
+  .btn-attach.has-file { background: #e6f5ed; border-color: #2ea06a; color: #1a7a4a; font-size:12px; }
+  .attach-input { display: none; }
+
+  /* Attachment viewer modal */
+  #attach-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.75); align-items: center; justify-content: center;
+  }
+  #attach-modal-overlay.open { display: flex; }
+  #attach-modal-box {
+    background: #fff; border-radius: 14px; padding: 0;
+    max-width: 96vw; max-height: 92vh; width: 480px;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  #attach-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: #92600a; color: #fff;
+    font-weight: 700; font-size: 15px; border-radius: 14px 14px 0 0;
+  }
+  #attach-modal-body {
+    flex: 1; overflow: auto; padding: 16px; display: flex;
+    align-items: center; justify-content: center; background: #f5efe0;
+    min-height: 200px;
+  }
+  #attach-modal-body img { max-width: 100%; max-height: 65vh; border-radius: 8px; }
+  #attach-modal-body iframe { width: 100%; height: 65vh; border: none; border-radius: 8px; }
+  #attach-modal-foot {
+    padding: 12px 18px; display: flex; gap: 10px; justify-content: flex-end;
+    border-top: 1px solid #e5d7b0; background: #fdf8ef;
+  }
+  .attach-source-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 18px 22px; background: #fdf8ef; border: 1.5px solid #c8b97a;
+    border-radius: 12px; cursor: pointer; font-size: 13px; color: #92600a;
+    font-weight: 600; min-width: 120px; transition: background 0.15s;
+    font-family: inherit;
+  }
+  .attach-source-btn:hover { background: #fdf3e0; }
+  .attach-source-btn .icon { font-size: 32px; }
+  #attach-source-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.6); align-items: flex-end; justify-content: center;
+  }
+  #attach-source-modal-overlay.open { display: flex; }
+  #attach-source-box {
+    background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 30px;
+    width: 100%; max-width: 480px;
+  }
+  #attach-source-box h3 { font-size: 16px; font-weight: 800; color: #1a1008; margin-bottom: 6px; }
+  #attach-source-box p { font-size: 12px; color: #92600a; margin-bottom: 18px; }
+  .attach-source-row { display: flex; gap: 12px; justify-content: center; }
+
   @media print {
     body > *:not(#print-frame-container) { display: none !important; }
     #print-frame-container { display: block !important; position: fixed; inset: 0; z-index: 9999; background: #fff; }
@@ -706,8 +809,8 @@
     #app { padding: 10px; }
     .app-title { font-size: 20px; }
     .day-col-head, .day-entry-row { grid-template-columns: 1fr 80px 70px 56px; font-size: 12px; }
-    .col-header, .entry-row { grid-template-columns: 62px 1fr 70px; font-size: 12px; }
-    .col-header.db-header, .entry-row.db-entry-row { grid-template-columns: 62px 1fr 68px 44px; font-size: 12px; }
+    .col-header, .entry-row { grid-template-columns: 62px 1fr 70px 44px; gap: 4px; font-size: 12px; }
+    .col-header.db-header, .entry-row.db-entry-row { grid-template-columns: 60px 1fr 64px 44px; font-size: 12px; }
     .cust-col-item { grid-template-columns: 30px 1fr 78px 58px 78px 22px; gap: 4px; padding: 8px 8px; }
     .pi-row { gap: 8px; }
     .backup-grid { grid-template-columns: 1fr; }
@@ -813,16 +916,69 @@
     .entry-form .btn-db { padding: 11px 12px; font-size: 13px; }
 
     /* ── LEDGER ROWS ── */
-    .col-header  { grid-template-columns: 60px 1fr 68px !important; padding: 4px 10px; font-size: 9px; }
-    .entry-row   { grid-template-columns: 60px 1fr 68px !important; padding: 8px 10px; font-size: 12px; }
-    .col-header.db-header  { grid-template-columns: 60px 1fr 64px 42px !important; }
-    .entry-row.db-entry-row{ grid-template-columns: 60px 1fr 64px 42px !important; }
+    .col-header  { grid-template-columns: 60px 1fr 70px 48px !important; padding: 4px 10px; font-size: 9px; }
+    .entry-row   { grid-template-columns: 60px 1fr 70px 48px !important; padding: 8px 10px; font-size: 12px; }
+    .col-header.db-header  { display: none !important; }
+
+    /* Stack ledger vertically on mobile */
+    .ledger { grid-template-columns: 1fr !important; }
+    .ledger-divider { height: 2px !important; width: 100% !important; background: repeating-linear-gradient(to right,var(--line) 0,var(--line) 8px,transparent 8px,transparent 16px) !important; }
+
+    /* Debit entry: single line grid — same as credit */
+    .entry-row.db-entry-row {
+      display: grid !important;
+      grid-template-columns: 60px 1fr 70px 48px !important;
+      flex-direction: unset !important;
+      gap: 4px !important;
+      padding: 7px 10px !important;
+      align-items: center !important;
+    }
+    .entry-row.db-entry-row .date-cell {
+      display: block !important;
+      font-size: 11px !important;
+      color: var(--ink2) !important;
+    }
+    .entry-row.db-entry-row .entry-narr-cell {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+    .entry-row.db-entry-row .entry-narr-text {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      flex: 1 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+    .entry-row.db-entry-row .amt {
+      font-size: 12px !important;
+      font-weight: 800 !important;
+      color: var(--db) !important;
+      white-space: nowrap !important;
+      text-align: right !important;
+    }
+    .entry-row.db-entry-row .days-badge {
+      font-size: 10px !important;
+      padding: 2px 4px !important;
+      display: block !important;
+      text-align: center !important;
+    }
+    .db-actions { gap: 2px !important; }
+    .btn-attach, .btn-attach.has-file {
+      font-size: 10px !important;
+      padding: 2px 5px !important;
+    }
 
     /* ── SETTINGS MODAL ── */
     .modal-overlay { padding: 0; align-items: flex-end; }
     .modal-box     { border-radius: 18px 18px 0 0; max-width: 100% !important; width: 100%; max-height: 92vh; margin: 0; }
     .modal-body    { max-height: 70vh; }
     .settings-section { padding: 12px 12px; }
+    /* On small screens, collapse grid to single column */
+    .settings-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
     .lang-btn      { padding: 10px 14px; font-size: 14px; }
     .theme-grid    { grid-template-columns: repeat(4, 1fr) !important; }
     .theme-swatch  { padding: 8px 2px; }
@@ -1094,48 +1250,76 @@
 
 <!-- Settings Modal -->
 <div class="modal-overlay" id="settings-modal">
-  <div class="modal-box" style="max-width:420px;">
-    <div class="modal-head">
-      <h3>⚙️ <span data-t="settingsTitle">સેટિંગ / Settings</span></h3>
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-head" style="background:linear-gradient(135deg,var(--gold-light),#fef9ec);">
+      <h3 style="display:flex;align-items:center;gap:8px;">⚙️ <span data-t="settingsTitle">સેટિંગ / Settings</span></h3>
       <button class="btn-close" onclick="closeSettingsModal()">✕</button>
     </div>
-    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px;padding:16px;">
+    <div class="modal-body" style="padding:14px;">
+      <div class="settings-grid">
 
       <!-- ── 1. APP NAME ── -->
-      <div class="settings-section">
-        <div class="settings-section-title">✏️ એપ નામ / App Name</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="text" id="inp-app-name" placeholder="Outstanding Record Book" maxlength="40"
-            style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink);background:#fff;">
-          <button class="btn-fb-save" onclick="saveAppName()" style="white-space:nowrap;padding:9px 14px;">💾 સેવ</button>
-          <button class="btn-new" onclick="resetAppName()" style="white-space:nowrap;padding:9px 12px;">↩️</button>
+      <div class="settings-section full-width">
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">✏️</span>
+            <span class="settings-section-title">એપ નામ / App Name</span>
+          </div>
+          <span class="settings-section-arrow">▼</span>
+        </div>
+        <div class="settings-section-body">
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <input type="text" id="inp-app-name" placeholder="Outstanding Record Book" maxlength="40"
+              style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink);background:#fff;">
+            <div style="display:flex;gap:7px;">
+              <button class="btn-fb-save" onclick="saveAppName()" style="flex:1;padding:9px 14px;">💾 સેવ</button>
+              <button class="btn-new" onclick="resetAppName()" style="flex:1;padding:9px 12px;">↩️ રીસેટ</button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- ── 2. LANGUAGE ── -->
       <div class="settings-section">
-        <div class="settings-section-title" data-t="languageLabel" style="display:flex;align-items:center;justify-content:space-between;">
-          <span>🌐 ભાષા / Language</span>
-          <button class="hint-icon-btn" id="lang-hint" onclick="showHintPopup('🌐 ભાષા / Language', 'ભાષા બદલો — ઇન્ટરફેસ ભાષા સ્વિચ કરો<br><br>🇮🇳 <strong>ગુજરાતી</strong> — App ગુજરાતીમાં<br>🇬🇧 <strong>English</strong> — App અંગ્રેજીમાં')" title="💡 ભાષા માહિતી">💡</button>
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">🌐</span>
+            <span class="settings-section-title" data-t="languageLabel" style="white-space:normal;">ભાષા /<br>Language</span>
+          </div>
+          <span class="settings-section-arrow">▼</span>
         </div>
-        <div class="lang-toggle" style="margin-top:8px;">
-          <button class="lang-btn" id="lang-btn-gu" onclick="setLanguage('gu')">🇮🇳 ગુજરાતી</button>
-          <button class="lang-btn" id="lang-btn-en" onclick="setLanguage('en')">🇬🇧 English</button>
+        <div class="settings-section-body">
+          <div class="lang-toggle">
+            <button class="lang-btn" id="lang-btn-gu" onclick="setLanguage('gu')">🇮🇳 ગુજ</button>
+            <button class="lang-btn" id="lang-btn-en" onclick="setLanguage('en')">🇬🇧 EN</button>
+          </div>
         </div>
       </div>
 
       <!-- ── 3. COLOUR THEME ── -->
       <div class="settings-section">
-        <div class="settings-section-title" style="display:flex;align-items:center;justify-content:space-between;">
-          <span>🎨 રંગ થીમ / Colour Theme</span>
-          <button class="hint-icon-btn" onclick="showHintPopup('🎨 થીમ / Colour Theme', 'થીમ બદલો — સમગ્ર એપ્લિકેશનનો રંગ બદલાઈ જશે<br><br>ઉપલબ્ધ થીમ્સ ક્લિક કરીને apply થાય છે. Theme automatically save થઈ જાય છે.')" title="💡 થીમ માહિતી">💡</button>
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">🎨</span>
+            <span class="settings-section-title" style="white-space:normal;">રંગ થીમ /<br>Colour Theme</span>
+          </div>
+          <span class="settings-section-arrow">▼</span>
         </div>
-        <div class="theme-grid" id="theme-grid" style="margin-top:10px;"></div>
+        <div class="settings-section-body">
+          <div class="theme-grid" id="theme-grid"></div>
+        </div>
       </div>
 
       <!-- ── 4. BACKUP & RESTORE ── -->
-      <div class="settings-section">
-        <div class="settings-section-title">💾 બૅકઅપ &amp; રિસ્ટોર / Backup &amp; Restore</div>
+      <div class="settings-section full-width">
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">💾</span>
+            <span class="settings-section-title">બૅકઅપ &amp; રિસ્ટોર / Backup &amp; Restore</span>
+          </div>
+          <span class="settings-section-arrow">▼</span>
+        </div>
+        <div class="settings-section-body">
         <div class="backup-grid" style="margin-bottom:10px;">
           <div class="backup-card">
             <div class="backup-card-title">📥 લોકલ બૅકઅપ</div>
@@ -1183,15 +1367,23 @@
             <div class="backup-empty">કોઈ બૅકઅપ નથી / No backups yet</div>
           </div>
         </div>
+        </div><!-- end settings-section-body -->
       </div>
 
       <!-- ── 5. SECURITY ── -->
-      <div class="settings-section">
-        <div class="settings-section-title" style="display:flex;align-items:center;justify-content:space-between;">
-          <span>🔒 સુરક્ષા / Security</span>
-          <button class="hint-icon-btn" onclick="showHintPopup('🔒 PIN Lock', '💡 PIN lock ચાલુ હોય ત્યારે એપ ખોલતી વખતે PIN માંગશે.<br><br>⏱️ <strong>Auto-Lock:</strong> ચોક્કસ સમય બાદ સ્ક્રીન આપોઆપ lock થઈ જશે.<br><br>🔑 <strong>Recovery Code:</strong> PIN ભૂલ્યા ત્યારે Recovery Code વાપરો — સુરક્ષિત જગ્યાએ save રાખો.')" title="💡 PIN Lock">💡</button>
+      <div class="settings-section full-width">
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">🔒</span>
+            <span class="settings-section-title">સુરક્ષા / Security</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <button class="hint-icon-btn" onclick="event.stopPropagation();showHintPopup('🔒 PIN Lock', '💡 PIN lock ચાલુ હોય ત્યારે એપ ખોલતી વખતે PIN માંગશે.<br><br>⏱️ <strong>Auto-Lock:</strong> ચોક્કસ સમય બાદ સ્ક્રીન આપોઆપ lock થઈ જશે.<br><br>🔑 <strong>Recovery Code:</strong> PIN ભૂલ્યા ત્યારે Recovery Code વાપરો — સુરક્ષિત જગ્યાએ save રાખો.')" title="💡 PIN Lock">💡</button>
+            <span class="settings-section-arrow">▼</span>
+          </div>
         </div>
-        <div class="firebase-section" style="gap:12px;margin-top:10px;">
+        <div class="settings-section-body">
+        <div class="firebase-section" style="gap:12px;">
           <!-- Status + AutoLock row -->
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div id="sec-status-badge" class="sec-status-badge off" style="flex:1;min-width:120px;">🔓 PIN Lock બંધ</div>
@@ -1235,15 +1427,23 @@
           </div>
           <button class="hint-icon-btn" onclick="showHintPopup('🔒 PIN Lock', '💡 PIN lock ચાલુ હોય ત્યારે એપ ખોલતી વખતે PIN માંગશે.<br><br>⏱️ <strong>Auto-Lock:</strong> ચોક્કસ સમય બાદ સ્ક્રીન આપોઆપ lock થઈ જશે.<br><br>🔑 <strong>Recovery Code:</strong> PIN ભૂલ્યા ત્યારે Recovery Code વાપરો — સુરક્ષિત જગ્યાએ save રાખો.')" title="💡 PIN Lock માહિતી" style="margin-top:4px;"> 💡</button>
         </div>
+        </div><!-- end settings-section-body -->
       </div>
 
       <!-- Firebase Sync Section -->
       <!-- ── 6. FIREBASE SYNC ── -->
-      <div class="settings-section">
-        <div class="settings-section-title" style="display:flex;align-items:center;justify-content:space-between;">
-          <span>🔥 Firebase Real-Time Sync</span>
-          <button class="hint-icon-btn" onclick="showHintPopup('🔥 Firebase Setup માહિતી', '💡 <strong>કેવી રીતે:</strong> Firebase Console → Create Project → Realtime Database → Get Config.<br><br>API Key, Project ID અને Database URL અહીં નાખો, સેવ કરો, પછી <em>કનેક્ટ</em> દબાવો. ત્યારે ડેટા real-time cloud સિંક થશે.<br><br>🔒 <strong>Security Rules:</strong> Firebase Console → Realtime Database → Rules tab માં નીચેના rules paste કરો:<br><code>{&quot;rules&quot;:{&quot;.read&quot;:&quot;auth != null&quot;,&quot;.write&quot;:&quot;auth != null&quot;}}</code><br><span style=&quot;color:#b91c1c;font-weight:700;&quot;>⚠️ Default rules (read/write: true) બદલો — નહિતર ડેટા publicly accessible રહેશે.</span>')" title="💡 Firebase Setup">💡</button>
+      <div class="settings-section full-width">
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">🔥</span>
+            <span class="settings-section-title">Firebase Real-Time Sync</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <button class="hint-icon-btn" onclick="event.stopPropagation();showHintPopup('🔥 Firebase Setup માહિતી', '💡 <strong>કેવી રીતે:</strong> Firebase Console → Create Project → Realtime Database → Get Config.<br><br>API Key, Project ID અને Database URL અહીં નાખો, સેવ કરો, પછી <em>કનેક્ટ</em> દબાવો. ત્યારે ડેટા real-time cloud સિંક થશે.<br><br>🔒 <strong>Security Rules:</strong> Firebase Console → Realtime Database → Rules tab માં નીચેના rules paste કરો:<br><code>{&quot;rules&quot;:{&quot;.read&quot;:&quot;auth != null&quot;,&quot;.write&quot;:&quot;auth != null&quot;}}</code><br><span style=&quot;color:#b91c1c;font-weight:700;&quot;>⚠️ Default rules (read/write: true) બદલો — નહિતર ડેટા publicly accessible રહેશે.</span>')" title="💡 Firebase Setup">💡</button>
+            <span class="settings-section-arrow">▼</span>
+          </div>
         </div>
+        <div class="settings-section-body">
         <div class="firebase-section">
           <!-- Status Row -->
           <div class="firebase-status-row" id="fb-status-row">
@@ -1317,6 +1517,13 @@
             </div>
             <div id="fb-auth-status" style="font-size:11px;color:#555;padding:6px 10px;background:#fff;border-radius:7px;border:1px solid #ddd;min-height:22px;"></div>
           </div>
+          <!-- Smart Paste Button -->
+          <div style="margin-bottom:4px;">
+            <button onclick="openSmartPasteModal()" style="width:100%;padding:10px 14px;background:linear-gradient(135deg,#ff6b35,#f59e0b);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.2px;box-shadow:0 2px 8px rgba(245,158,11,0.35);">
+              <span style="font-size:16px;">⚡</span> Smart Paste — Firebase Config
+            </button>
+          </div>
+
           <!-- Action Buttons -->
           <div class="firebase-btn-row">
             <button class="btn-fb-save" onclick="fbSaveConfig()">💾 સેવ કરો</button>
@@ -1391,13 +1598,125 @@
           </div>
           <!-- ── END USER-SPECIFIC RULES ── -->
         </div>
+        </div><!-- end settings-section-body -->
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           LAN SHARE SECTION
+           ═══════════════════════════════════════ -->
+      <div class="settings-section full-width" id="lan-share-section" style="border:1.5px solid #7dd3fc;background:#f0f9ff;">
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)" style="background:#f0f9ff;">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">📡</span>
+            <span class="settings-section-title" style="color:#0369a1;">LAN Share — સ્થાનિક શેર</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="lan-peer-dot" style="width:9px;height:9px;border-radius:50%;background:#d1d5db;display:inline-block;flex-shrink:0;"></span>
+            <span class="settings-section-arrow" style="color:#0369a1;">▼</span>
+          </div>
+        </div>
+        <div class="settings-section-body">
+        <div id="lan-status-line" style="font-size:12px;color:#555;background:#fff;border:1px solid #bae6fd;border-radius:7px;padding:7px 11px;margin-bottom:12px;min-height:22px;display:flex;align-items:center;gap:7px;">
+          <span id="lan-status-msg">⚪ Ready — Host બનો અથવા Room Code enter કરો</span>
+        </div>
+
+        <!-- MODE TOGGLE: Host / Join -->
+        <div style="display:flex;gap:0;border:1.5px solid #7dd3fc;border-radius:9px;overflow:hidden;margin-bottom:12px;">
+          <button id="lan-tab-host" onclick="lanShowTab('host')"
+            style="flex:1;padding:9px 8px;border:none;background:#0369a1;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+            📡 Host બનો
+          </button>
+          <button id="lan-tab-join" onclick="lanShowTab('join')"
+            style="flex:1;padding:9px 8px;border:none;background:#fff;color:#0369a1;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+            🔗 Join કરો
+          </button>
+        </div>
+
+        <!-- HOST PANEL -->
+        <div id="lan-host-panel">
+          <div style="font-size:12px;color:#0c4a6e;margin-bottom:10px;line-height:1.6;background:#e0f2fe;border-radius:8px;padding:8px 11px;">
+            📱 <strong>Host</strong> = આ device server બને. બીજા devices Room Code enter કરીને connect થઈ શકે.
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <button onclick="lanStartHost()" id="lan-btn-start-host"
+              style="flex:1;padding:10px;background:#0369a1;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;">
+              📡 Host Start કરો
+            </button>
+            <button onclick="lanStopHost()" id="lan-btn-stop-host" style="display:none;
+              flex:1;padding:10px;background:#ef4444;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+              ⛔ Stop
+            </button>
+          </div>
+          <!-- Room Code Display -->
+          <div id="lan-room-code-box" style="display:none;text-align:center;background:#fff;border:2px dashed #0369a1;border-radius:12px;padding:14px 10px;margin-bottom:10px;">
+            <div style="font-size:11px;color:#0369a1;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">📋 Room Code — બીજા devices ને આ code આપો</div>
+            <div id="lan-room-code-display" style="font-size:32px;font-weight:900;color:#1e40af;letter-spacing:8px;font-family:monospace;margin-bottom:8px;"></div>
+            <button onclick="lanCopyCode()" style="padding:6px 18px;background:#0369a1;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📋 Copy Code</button>
+          </div>
+          <!-- Connected peers list -->
+          <div id="lan-connected-peers" style="display:none;background:#f0fff8;border:1.5px solid #86efac;border-radius:9px;padding:10px 12px;">
+            <div style="font-size:11px;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:7px;">📱 Connected Devices</div>
+            <div id="lan-peers-list" style="font-size:12px;color:#555;"></div>
+          </div>
+        </div>
+
+        <!-- JOIN PANEL -->
+        <div id="lan-join-panel" style="display:none;">
+          <div style="font-size:12px;color:#0c4a6e;margin-bottom:10px;line-height:1.6;background:#e0f2fe;border-radius:8px;padding:8px 11px;">
+            🔗 <strong>Join</strong> = Host device નો Room Code enter કરો. Data auto-sync થશે.
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+            <input type="text" id="lan-join-code-input" placeholder="ABC123" maxlength="6"
+              style="flex:1;padding:11px 14px;border:2px solid #7dd3fc;border-radius:9px;font-size:20px;font-weight:800;font-family:monospace;color:#1e40af;text-transform:uppercase;text-align:center;letter-spacing:6px;background:#fff;"
+              oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+            <button onclick="lanJoin()" id="lan-btn-join"
+              style="padding:11px 16px;background:#0369a1;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;">
+              🔗 Connect
+            </button>
+            <button onclick="lanDisconnectJoin()" id="lan-btn-disconnect-join" style="display:none;
+              padding:11px 14px;background:#ef4444;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+              ✕
+            </button>
+          </div>
+          <!-- Sync controls (shown when connected) -->
+          <div id="lan-join-connected-box" style="display:none;background:#f0fff8;border:1.5px solid #86efac;border-radius:9px;padding:10px 12px;">
+            <div style="font-size:12px;font-weight:700;color:#15803d;margin-bottom:8px;">🟢 Host સાથે connected!</div>
+            <div style="display:flex;gap:7px;">
+              <button onclick="lanPullFromHost()" style="flex:1;padding:8px;background:#fff;color:#0369a1;border:1.5px solid #7dd3fc;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">⬇️ Pull (Host → My device)</button>
+              <button onclick="lanPushToHost()" style="flex:1;padding:8px;background:#0369a1;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">⬆️ Push (My data → Host)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auto-sync toggle -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:#fff;border:1px solid #bae6fd;border-radius:8px;">
+          <label class="toggle-switch" title="Auto Sync">
+            <input type="checkbox" id="lan-auto-sync" onchange="lanToggleAutoSync(this.checked)" checked>
+            <span class="toggle-track"></span>
+          </label>
+          <span style="font-size:12px;color:#0369a1;font-weight:700;">⚡ Auto Sync</span>
+          <span style="font-size:11px;color:#888;flex:1;">— Save થતા જ બધા devices અપડેટ</span>
+        </div>
+
+        <!-- Info note -->
+        <div style="font-size:10px;color:#6b7280;margin-top:9px;line-height:1.6;padding:6px 10px;background:#f8fafc;border-radius:7px;">
+          💡 PeerJS (WebRTC) — Internet ફક્ત initial connect માટે. Data WiFi through જ transfer. No server needed.
+        </div>
+        </div><!-- end settings-section-body -->
       </div>
 
       <!-- ═══════════════════════════════════════
            ERASE DATA SECTION
            ═══════════════════════════════════════ -->
-      <div class="settings-section" style="border:1.5px solid #fca5a5;background:#fff5f5;">
-        <div class="settings-section-title" style="color:#b91c1c;">🗑️ ડેટા ભૂંસો / Erase Data</div>
+      <div class="settings-section full-width" style="border:1.5px solid #fca5a5;background:#fff5f5;">
+        <div class="settings-section-header" onclick="toggleSettingsSection(this)" style="background:#fff5f5;">
+          <div class="settings-section-header-left">
+            <span class="settings-section-icon">🗑️</span>
+            <span class="settings-section-title" style="color:#b91c1c;">ડેટા ભૂંસો / Erase Data</span>
+          </div>
+          <span class="settings-section-arrow" style="color:#b91c1c;">▼</span>
+        </div>
+        <div class="settings-section-body">
         <div style="font-size:12px;color:#7f1d1d;margin-bottom:12px;line-height:1.6;">
           ⚠️ ભૂંસ્યા પછી ડેટા પાછો ન આવે. પહેલા <strong>Backup</strong> લો.
         </div>
@@ -1421,11 +1740,13 @@
             </span>
           </button>
         </div>
+        </div><!-- end settings-section-body -->
       </div>
 
+      </div><!-- end settings-grid -->
     </div>
-    <div class="modal-foot">
-      <button class="btn-new" onclick="closeSettingsModal()" style="margin-left:auto;" data-t="closeBtn">બંધ</button>
+    <div class="modal-foot" style="justify-content:flex-end;padding:12px 16px;">
+      <button class="btn-summary" onclick="closeSettingsModal()" style="min-width:90px;" data-t="closeBtn">✕ બંધ</button>
     </div>
   </div>
 </div>
@@ -1762,15 +2083,65 @@ function fmtD(dateStr) {
 
 function save() {
   try {
-    const custStr  = JSON.stringify(customers);
-    const entStr   = JSON.stringify(entries);
-    localStorage.setItem('ug_customers', custStr);
-    localStorage.setItem('ug_entries',   entStr);
-    // ── Double-save backup key so even if primary key corrupts, data survives ──
+    // Strip large base64 dataUrls from entries before saving to localStorage
+    // (they are stored separately in IndexedDB via idbSaveAttach)
+    const entriesForStorage = {};
+    for (const [cid, ents] of Object.entries(entries)) {
+      entriesForStorage[cid] = ents.map(e => {
+        if (e.attachment && e.attachment.dataUrl) {
+          // Keep metadata only, strip the large dataUrl
+          const { dataUrl, ...meta } = e.attachment;
+          return { ...e, attachment: { ...meta, hasLocalData: true } };
+        }
+        return e;
+      });
+    }
+    const custStr = JSON.stringify(customers);
+    const entStr  = JSON.stringify(entriesForStorage);
+    localStorage.setItem('ug_customers',    custStr);
+    localStorage.setItem('ug_entries',      entStr);
     localStorage.setItem('ug_customers_bk', custStr);
     localStorage.setItem('ug_entries_bk',   entStr);
-  } catch(e) {}
+  } catch(e) {
+    showToast('⚠️ Save error: ' + e.message);
+  }
   renderCustColumn();
+}
+
+// ── IndexedDB for attachment binary data ──
+function _idbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('ug_attachments', 1);
+    req.onupgradeneeded = ev => ev.target.result.createObjectStore('files');
+    req.onsuccess = ev => res(ev.target.result);
+    req.onerror   = ev => rej(ev.target.error);
+  });
+}
+async function idbSaveAttach(entId, dataUrl) {
+  try {
+    const db = await _idbOpen();
+    const tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').put(dataUrl, entId);
+    await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+  } catch(e) { showToast('⚠️ Attachment IndexedDB save failed: ' + e.message); }
+}
+async function idbGetAttach(entId) {
+  try {
+    const db = await _idbOpen();
+    return await new Promise((res, rej) => {
+      const tx  = db.transaction('files', 'readonly');
+      const req = tx.objectStore('files').get(entId);
+      req.onsuccess = () => res(req.result || null);
+      req.onerror   = () => res(null);
+    });
+  } catch(e) { return null; }
+}
+async function idbDeleteAttach(entId) {
+  try {
+    const db = await _idbOpen();
+    const tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').delete(entId);
+  } catch(e) {}
 }
 
 // ── Restore from backup keys if primary is empty/corrupt ──
@@ -2008,9 +2379,14 @@ function renderCustBook() {
       const d = daysSinceM(e.date);
       const badgeClass = d > 60 ? 'days-over' : d > 30 ? 'days-warn' : 'days-ok';
       const daysHtml = `<span class="days-badge ${badgeClass}">${d} days</span>`;
+      const hasFile = !!(e.attachment && (e.attachment.dataUrl || e.attachment.url || e.attachment.hasLocalData));
+      const isCloud = !!(e.attachment && e.attachment.synced && e.attachment.url);
+      const attachBtn = hasFile
+        ? `<button class="btn-attach has-file" onclick="viewAttach('${activeId}','${e.id}')" title="${isCloud ? '☁️ Firebase Storage' : '📱 Local only'}">${isCloud ? '☁️' : '📎'} જુઓ</button>`
+        : `<button class="btn-attach" onclick="openAttachSource('${activeId}','${e.id}')" title="ફાઈલ જોડો">📎</button>`;
       return `<div class="entry-row db-entry-row">
-        <span class="date">${fmtD(e.date)}</span>
-        <span class="entry-narr-cell"><span class="entry-narr-text">${e.narration||'—'}</span><span class="entry-actions"><button class="btn-edit" onclick="openEditModal('${activeId}','${e.id}')" title="સુધારો">✎</button><button class="btn-del" onclick="delEntry('${activeId}','${e.id}')" title="કાઢો">✕</button></span></span>
+        <span class="date-cell"><span class="date">${fmtD(e.date)}</span></span>
+        <span class="entry-narr-cell"><span class="entry-narr-text">${e.narration||'—'}</span><span class="db-actions">${attachBtn}<button class="btn-edit" onclick="openEditModal('${activeId}','${e.id}')" title="સુધારો">✎</button><button class="btn-del" onclick="delEntry('${activeId}','${e.id}')" title="કાઢો">✕</button></span></span>
         <span class="amt db-amt">₹${e.amount.toLocaleString('en-IN')}</span>
         ${daysHtml}
       </div>`;
@@ -2019,6 +2395,7 @@ function renderCustBook() {
       <span class="date">${fmtD(e.date)}</span>
       <span class="entry-narr-cell"><span class="entry-narr-text">${e.narration||'—'}</span><span class="entry-actions"><button class="btn-edit" onclick="openEditModal('${activeId}','${e.id}')" title="સુધારો">✎</button><button class="btn-del" onclick="delEntry('${activeId}','${e.id}')" title="કાઢો">✕</button></span></span>
       <span class="amt cr-amt">₹${e.amount.toLocaleString('en-IN')}</span>
+      <span></span>
     </div>`;
   };
 
@@ -2184,13 +2561,19 @@ function renderDayScreen() {
     document.getElementById('day-entries').innerHTML = `<div class="day-empty">${isToday ? t('noEntriesToday') : 'આ તારીખે કોઈ નોંધ નથી'}</div>`;
     return;
   }
-  document.getElementById('day-entries').innerHTML = allToday.map(e=>`
-    <div class="day-entry-row" style="cursor:pointer;" onclick="openCustModal('${e.custId}')">
-      <span class="de-name">${e.custName}</span>
+  document.getElementById('day-entries').innerHTML = allToday.map(e=>{
+    const hasFile = !!(e.attachment && (e.attachment.dataUrl || e.attachment.url || e.attachment.hasLocalData));
+    const isCloud = !!(e.attachment && e.attachment.synced && e.attachment.url);
+    const viewBtn = (e.type === 'debit' && hasFile)
+      ? `<button class="de-attach-btn" onclick="event.stopPropagation();viewAttach('${e.custId}','${e.id}')" title="${isCloud ? '☁️ Firebase' : '📱 Local'}">${isCloud ? '☁️' : '📎'} જુઓ</button>`
+      : '';
+    return `<div class="day-entry-row" style="cursor:pointer;" onclick="openCustModal('${e.custId}')">
+      <span class="de-name-cell"><span class="de-name">${e.custName}</span>${viewBtn}</span>
       <span class="de-narr">${e.narration||'—'}</span>
       <span class="de-amt ${e.type==='credit'?'cr-amt':'db-amt'}">₹${e.amount.toLocaleString('en-IN')}</span>
       <span class="de-type ${e.type==='credit'?'cr':'db'}">${e.type==='credit'?(currentLang==='en'?'Credit':'જમા'):(currentLang==='en'?'Debit':'ઉધાર')}</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 
@@ -2275,9 +2658,14 @@ function renderBook() {
       const d = daysSince(e.date);
       const badgeClass = d > 60 ? 'days-over' : d > 30 ? 'days-warn' : 'days-ok';
       const daysHtml = `<span class="days-badge ${badgeClass}">${d} days</span>`;
+      const hasFile = !!(e.attachment && (e.attachment.dataUrl || e.attachment.url || e.attachment.hasLocalData));
+      const isCloud = !!(e.attachment && e.attachment.synced && e.attachment.url);
+      const attachBtn = hasFile
+        ? `<button class="btn-attach has-file" onclick="viewAttach('${activeId}','${e.id}')" title="${isCloud ? '☁️ Firebase Storage' : '📱 Local only'}">${isCloud ? '☁️' : '📎'} જુઓ</button>`
+        : `<button class="btn-attach" onclick="openAttachSource('${activeId}','${e.id}')" title="ફાઈલ જોડો">📎</button>`;
       return `<div class="entry-row db-entry-row">
-        <span class="date">${fmtD(e.date)}</span>
-        <span class="entry-narr-cell"><span class="entry-narr-text">${e.narration||'—'}</span><span class="entry-actions"><button class="btn-edit" onclick="openEditModal('${activeId}','${e.id}')" title="સુધારો">✎</button><button class="btn-del" onclick="delEntry('${activeId}','${e.id}')" title="કાઢો">✕</button></span></span>
+        <span class="date-cell"><span class="date">${fmtD(e.date)}</span></span>
+        <span class="entry-narr-cell"><span class="entry-narr-text">${e.narration||'—'}</span><span class="db-actions">${attachBtn}<button class="btn-edit" onclick="openEditModal('${activeId}','${e.id}')" title="સુધારો">✎</button><button class="btn-del" onclick="delEntry('${activeId}','${e.id}')" title="કાઢો">✕</button></span></span>
         <span class="amt db-amt">₹${e.amount.toLocaleString('en-IN')}</span>
         ${daysHtml}
       </div>`;
@@ -2286,6 +2674,7 @@ function renderBook() {
       <span class="date">${fmtD(e.date)}</span>
       <span class="entry-narr-cell"><span class="entry-narr-text">${e.narration||'—'}</span><span class="entry-actions"><button class="btn-edit" onclick="openEditModal('${activeId}','${e.id}')" title="સુધારો">✎</button><button class="btn-del" onclick="delEntry('${activeId}','${e.id}')" title="કાઢો">✕</button></span></span>
       <span class="amt cr-amt">₹${e.amount.toLocaleString('en-IN')}</span>
+      <span></span>
     </div>`;
   };
 
@@ -2496,14 +2885,59 @@ function closeModal() {
   document.getElementById('print-modal').classList.remove('open');
 }
 
-function shareWhatsApp() {
-  const c = customers.find(x=>x.id===activeId);
-  const msg = buildMsg();
-  const phone = c&&c.mobile ? c.mobile.replace(/\D/g,'') : '';
+/* ── ATTACHMENT-AWARE WHATSAPP SHARE HELPER ── */
+async function _getAttachmentFile(custId) {
+  // Find latest debit entry with attachment for this customer
+  const ents = (entries[custId] || []).filter(e => e.attachment);
+  if (!ents.length) return null;
+  const ent = [...ents].sort((a,b) => b.date.localeCompare(a.date))[0];
+  const att = ent.attachment;
+  try {
+    let blob = null;
+    let filename = att.name || 'attachment.jpg';
+    if (att.url) {
+      // Firebase Storage URL
+      const res = await fetch(att.url);
+      if (!res.ok) return null;
+      blob = await res.blob();
+    } else {
+      let dataUrl = att.dataUrl;
+      if (!dataUrl && att.hasLocalData) dataUrl = await idbGetAttach(ent.id);
+      if (!dataUrl) return null;
+      const res = await fetch(dataUrl);
+      blob = await res.blob();
+    }
+    return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+  } catch(e) { return null; }
+}
+
+async function _shareWAWithAttach(custId, msg) {
+  const c = customers.find(x => x.id === custId);
+  const phone = c && c.mobile ? c.mobile.replace(/\D/g,'') : '';
+  // Try Web Share API with file (works on Android Chrome)
+  if (navigator.canShare) {
+    const file = await _getAttachmentFile(custId);
+    if (file && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], text: msg, title: c ? c.name : 'Outstanding' });
+        return;
+      } catch(e) {
+        if (e.name !== 'AbortError') {
+          // Fall through to wa.me link
+        } else { return; }
+      }
+    }
+  }
+  // Fallback: wa.me link with text only
   const url = phone
     ? `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`
     : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(url,'_blank');
+  window.open(url, '_blank');
+}
+
+async function shareWhatsApp() {
+  const msg = buildMsg();
+  await _shareWAWithAttach(activeId, msg);
 }
 function shareSMS() {
   const c = customers.find(x=>x.id===activeId);
@@ -2537,12 +2971,9 @@ function buildMsgForId(custId) {
   m += `\n*બાકી: ₹${Math.abs(bal).toLocaleString('en-IN',{minimumFractionDigits:2})} ${bal>0?'(ઉધાર)':bal<0?'(જમા)':'(ચૂ.)'}*`;
   return m;
 }
-function quickShareWA(custId) {
-  const c = customers.find(x=>x.id===custId);
+async function quickShareWA(custId) {
   const msg = buildMsgForId(custId);
-  const phone = c&&c.mobile ? c.mobile.replace(/\D/g,'') : '';
-  const url = phone ? `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(url,'_blank');
+  await _shareWAWithAttach(custId, msg);
 }
 function quickShareSMS(custId) {
   const c = customers.find(x=>x.id===custId);
@@ -3094,10 +3525,110 @@ function printSummary() {
         th, td { padding:7px 10px; border:1px solid #e5d7b0; }
         th { background:#fdf3e0; color:#92600a; font-weight:700; font-size:11px; text-transform:uppercase; }
         tfoot td { background:#faf0d0; font-weight:800; border-top:2px solid #c8b97a; }
-        @media print { @page { margin:12mm; } }
+      
+  /* ── ATTACHMENT FEATURE ── */
+  .btn-attach {
+    background: none; border: 1px solid #c8b97a; border-radius: 5px;
+    padding: 2px 5px; font-size: 13px; cursor: pointer; color: #92600a;
+    line-height: 1; white-space: nowrap; display: inline-flex; align-items: center;
+  }
+  .btn-attach:hover { background: #fdf3e0; }
+  .btn-attach.has-file { background: #e6f5ed; border-color: #2ea06a; color: #1a7a4a; font-size:12px; }
+  .attach-input { display: none; }
+
+  /* Attachment viewer modal */
+  #attach-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.75); align-items: center; justify-content: center;
+  }
+  #attach-modal-overlay.open { display: flex; }
+  #attach-modal-box {
+    background: #fff; border-radius: 14px; padding: 0;
+    max-width: 96vw; max-height: 92vh; width: 480px;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  #attach-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: #92600a; color: #fff;
+    font-weight: 700; font-size: 15px; border-radius: 14px 14px 0 0;
+  }
+  #attach-modal-body {
+    flex: 1; overflow: auto; padding: 16px; display: flex;
+    align-items: center; justify-content: center; background: #f5efe0;
+    min-height: 200px;
+  }
+  #attach-modal-body img { max-width: 100%; max-height: 65vh; border-radius: 8px; }
+  #attach-modal-body iframe { width: 100%; height: 65vh; border: none; border-radius: 8px; }
+  #attach-modal-foot {
+    padding: 12px 18px; display: flex; gap: 10px; justify-content: flex-end;
+    border-top: 1px solid #e5d7b0; background: #fdf8ef;
+  }
+  .attach-source-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 18px 22px; background: #fdf8ef; border: 1.5px solid #c8b97a;
+    border-radius: 12px; cursor: pointer; font-size: 13px; color: #92600a;
+    font-weight: 600; min-width: 120px; transition: background 0.15s;
+    font-family: inherit;
+  }
+  .attach-source-btn:hover { background: #fdf3e0; }
+  .attach-source-btn .icon { font-size: 32px; }
+  #attach-source-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.6); align-items: flex-end; justify-content: center;
+  }
+  #attach-source-modal-overlay.open { display: flex; }
+  #attach-source-box {
+    background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 30px;
+    width: 100%; max-width: 480px;
+  }
+  #attach-source-box h3 { font-size: 16px; font-weight: 800; color: #1a1008; margin-bottom: 6px; }
+  #attach-source-box p { font-size: 12px; color: #92600a; margin-bottom: 18px; }
+  .attach-source-row { display: flex; gap: 12px; justify-content: center; }
+
+  @media print { @page { margin:12mm; } }
       </style>
     </head>
-    <body>${content}</body>
+    <body>${content}
+<!-- ── ATTACHMENT SOURCE PICKER ── -->
+<div id="attach-source-modal-overlay" onclick="if(event.target===this)closeAttachSource()">
+  <div id="attach-source-box">
+    <h3>📎 ફાઈલ જોડો</h3>
+    <p>JPEG, PNG અથવા PDF • 100 KB સુધી compress થશે</p>
+    <div class="attach-source-row">
+      <button class="attach-source-btn" onclick="triggerAttachInput('gallery')">
+        <span class="icon">🖼️</span>
+        <span>Gallery</span>
+        <span style="font-size:10px;color:#aaa;font-weight:400;">ફોટો/PDF</span>
+      </button>
+      <button class="attach-source-btn" onclick="triggerAttachInput('camera')">
+        <span class="icon">📷</span>
+        <span>Camera</span>
+        <span style="font-size:10px;color:#aaa;font-weight:400;">તરત ફોટો</span>
+      </button>
+    </div>
+    <input type="file" id="attach-file-gallery" class="attach-input" accept="image/jpeg,image/png,application/pdf">
+    <input type="file" id="attach-file-camera"  class="attach-input" accept="image/jpeg,image/png" capture="environment">
+  </div>
+</div>
+
+<!-- ── ATTACHMENT VIEWER ── -->
+<div id="attach-modal-overlay" onclick="if(event.target===this)closeAttachModal()">
+  <div id="attach-modal-box">
+    <div id="attach-modal-head">
+      <span id="attach-modal-title">📎 જોડેલ ફાઈલ</span>
+      <button onclick="closeAttachModal()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:18px;cursor:pointer;border-radius:6px;padding:2px 8px;">✕</button>
+    </div>
+    <div id="attach-modal-body"></div>
+    <div id="attach-modal-foot">
+      <button onclick="deleteCurrentAttach()" style="background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">🗑 કાઢો</button>
+      <button onclick="downloadCurrentAttach()" style="background:#e6f5ed;color:#1a7a4a;border:1px solid #2ea06a;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">⬇️ Download</button>
+      <button onclick="closeAttachModal()" style="background:#92600a;color:#fff;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">બંધ</button>
+    </div>
+  </div>
+</div>
+
+</body>
     </html>
   `);
   win.document.close();
@@ -3828,10 +4359,110 @@ function doPrint() {
         ${!s.showCustInfo  ? '.pp-cust-meta{display:none!important}' : ''}
         ${!s.showFooter    ? '.pp-footer{display:none!important}' : ''}
         ${!s.showSummary   ? '.pp-summary-grid{display:none!important}' : ''}
-        @media print { ${pageRule} body{padding:0;} }
+      
+  /* ── ATTACHMENT FEATURE ── */
+  .btn-attach {
+    background: none; border: 1px solid #c8b97a; border-radius: 5px;
+    padding: 2px 5px; font-size: 13px; cursor: pointer; color: #92600a;
+    line-height: 1; white-space: nowrap; display: inline-flex; align-items: center;
+  }
+  .btn-attach:hover { background: #fdf3e0; }
+  .btn-attach.has-file { background: #e6f5ed; border-color: #2ea06a; color: #1a7a4a; font-size:12px; }
+  .attach-input { display: none; }
+
+  /* Attachment viewer modal */
+  #attach-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.75); align-items: center; justify-content: center;
+  }
+  #attach-modal-overlay.open { display: flex; }
+  #attach-modal-box {
+    background: #fff; border-radius: 14px; padding: 0;
+    max-width: 96vw; max-height: 92vh; width: 480px;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  #attach-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: #92600a; color: #fff;
+    font-weight: 700; font-size: 15px; border-radius: 14px 14px 0 0;
+  }
+  #attach-modal-body {
+    flex: 1; overflow: auto; padding: 16px; display: flex;
+    align-items: center; justify-content: center; background: #f5efe0;
+    min-height: 200px;
+  }
+  #attach-modal-body img { max-width: 100%; max-height: 65vh; border-radius: 8px; }
+  #attach-modal-body iframe { width: 100%; height: 65vh; border: none; border-radius: 8px; }
+  #attach-modal-foot {
+    padding: 12px 18px; display: flex; gap: 10px; justify-content: flex-end;
+    border-top: 1px solid #e5d7b0; background: #fdf8ef;
+  }
+  .attach-source-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 18px 22px; background: #fdf8ef; border: 1.5px solid #c8b97a;
+    border-radius: 12px; cursor: pointer; font-size: 13px; color: #92600a;
+    font-weight: 600; min-width: 120px; transition: background 0.15s;
+    font-family: inherit;
+  }
+  .attach-source-btn:hover { background: #fdf3e0; }
+  .attach-source-btn .icon { font-size: 32px; }
+  #attach-source-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.6); align-items: flex-end; justify-content: center;
+  }
+  #attach-source-modal-overlay.open { display: flex; }
+  #attach-source-box {
+    background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 30px;
+    width: 100%; max-width: 480px;
+  }
+  #attach-source-box h3 { font-size: 16px; font-weight: 800; color: #1a1008; margin-bottom: 6px; }
+  #attach-source-box p { font-size: 12px; color: #92600a; margin-bottom: 18px; }
+  .attach-source-row { display: flex; gap: 12px; justify-content: center; }
+
+  @media print { ${pageRule} body{padding:0;} }
       </style>
     </head>
-    <body>${paper.innerHTML}</body>
+    <body>${paper.innerHTML}
+<!-- ── ATTACHMENT SOURCE PICKER ── -->
+<div id="attach-source-modal-overlay" onclick="if(event.target===this)closeAttachSource()">
+  <div id="attach-source-box">
+    <h3>📎 ફાઈલ જોડો</h3>
+    <p>JPEG, PNG અથવા PDF • 100 KB સુધી compress થશે</p>
+    <div class="attach-source-row">
+      <button class="attach-source-btn" onclick="triggerAttachInput('gallery')">
+        <span class="icon">🖼️</span>
+        <span>Gallery</span>
+        <span style="font-size:10px;color:#aaa;font-weight:400;">ફોટો/PDF</span>
+      </button>
+      <button class="attach-source-btn" onclick="triggerAttachInput('camera')">
+        <span class="icon">📷</span>
+        <span>Camera</span>
+        <span style="font-size:10px;color:#aaa;font-weight:400;">તરત ફોટો</span>
+      </button>
+    </div>
+    <input type="file" id="attach-file-gallery" class="attach-input" accept="image/jpeg,image/png,application/pdf">
+    <input type="file" id="attach-file-camera"  class="attach-input" accept="image/jpeg,image/png" capture="environment">
+  </div>
+</div>
+
+<!-- ── ATTACHMENT VIEWER ── -->
+<div id="attach-modal-overlay" onclick="if(event.target===this)closeAttachModal()">
+  <div id="attach-modal-box">
+    <div id="attach-modal-head">
+      <span id="attach-modal-title">📎 જોડેલ ફાઈલ</span>
+      <button onclick="closeAttachModal()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:18px;cursor:pointer;border-radius:6px;padding:2px 8px;">✕</button>
+    </div>
+    <div id="attach-modal-body"></div>
+    <div id="attach-modal-foot">
+      <button onclick="deleteCurrentAttach()" style="background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">🗑 કાઢો</button>
+      <button onclick="downloadCurrentAttach()" style="background:#e6f5ed;color:#1a7a4a;border:1px solid #2ea06a;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">⬇️ Download</button>
+      <button onclick="closeAttachModal()" style="background:#92600a;color:#fff;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">બંધ</button>
+    </div>
+  </div>
+</div>
+
+</body>
     </html>
   `);
   win.document.close();
@@ -3875,14 +4506,9 @@ function _buildPrintText(custId) {
   return lines.join('\n');
 }
 
-function doPrintShareWA() {
+async function doPrintShareWA() {
   const txt = _buildPrintText(activeId);
-  const c   = customers.find(x => x.id === activeId);
-  const num = c && c.mobile ? c.mobile.replace(/\D/g,'') : '';
-  const url = num
-    ? `https://wa.me/91${num}?text=${encodeURIComponent(txt)}`
-    : `https://wa.me/?text=${encodeURIComponent(txt)}`;
-  window.open(url, '_blank');
+  await _shareWAWithAttach(activeId, txt);
 }
 
 function doPrintShareSMS() {
@@ -4266,6 +4892,8 @@ async function fbConnect() {
     const res = await fetch(url);
     if (!res.ok && res.status !== 404) throw new Error('HTTP ' + res.status);
     fbConnected = true;
+    // Auto-sync any locally saved attachments to Firebase Storage
+    setTimeout(fbSyncPendingAttachments, 1500);
     fbUpdateUI();
     // Pull first — always replace local with cloud when local is empty
     const pulled = await fbPull();
@@ -4276,6 +4904,7 @@ async function fbConnect() {
     fbSetStatus('connected', '🟢 Connected — Real-time Sync ON', localStorage.getItem('ug_fb_last_sync') || '');
     showToast('🔥 Firebase connected!');
     fbStartPolling();
+    fbStartDataStream();
     fbStartDeviceTracking();
     setTimeout(fbDailyAutoBackup, 3000);
   } catch(e) {
@@ -4288,6 +4917,7 @@ async function fbConnect() {
 
 function fbDisconnect() {
   fbStopPolling();
+  fbStopDataStream();
   fbStopDeviceTracking();
   fbConnected = false;
   fbUpdateUI();
@@ -4721,6 +5351,46 @@ function fbStopPolling() {
   if (fbPollInterval) { clearInterval(fbPollInterval); fbPollInterval = null; }
 }
 
+// ── REAL-TIME SSE STREAM for data (instant sync — replaces 8s polling) ──
+let fbDataStream = null;
+
+function fbStartDataStream() {
+  if (fbDataStream) { fbDataStream.close(); fbDataStream = null; }
+  if (!fbConfig) return;
+  const base = (fbConfig.dbUrl || '').replace(/\/$/, '');
+  const path = fbConfig.path || 'ugharani';
+  const auth = fbAuthToken ? '?auth=' + encodeURIComponent(fbAuthToken) : '';
+  const url  = base + '/' + path + '/data.json' + auth;
+  try {
+    fbDataStream = new EventSource(url);
+    fbDataStream.addEventListener('put', async function(e) {
+      try {
+        const msg = JSON.parse(e.data);
+        if (!msg.data || !msg.data.customers) return;
+        if (fbPushInFlight) return;
+        const remoteTs = new Date(msg.data.syncedAt || 0).getTime();
+        const localTs  = parseInt(localStorage.getItem('ug_fb_local_ts') || '0');
+        if (remoteTs > localTs + 2000) {
+          await fbPull();
+          const now = new Date().toLocaleTimeString('en-IN');
+          fbSetStatus('connected', '🟢 Real-time sync — instant update', now);
+          localStorage.setItem('ug_fb_last_sync', now);
+        }
+      } catch(err) {}
+    });
+    fbDataStream.onerror = function() {
+      // SSE dropped — close and let polling handle it as fallback
+      if (fbDataStream) { fbDataStream.close(); fbDataStream = null; }
+    };
+  } catch(e) {
+    // Browser does not support SSE — polling already handles sync
+  }
+}
+
+function fbStopDataStream() {
+  if (fbDataStream) { fbDataStream.close(); fbDataStream = null; }
+}
+
 // Sync toast suppressed — device count badge used instead
 function _fbSyncToast(msg) { /* no-op: sync popup removed */ }
 
@@ -4863,8 +5533,9 @@ async function fbFetchCurrentRules() {
     const data = await res.json();
     fbSetRulesStatus('ok', '✅ Current rules fetched successfully');
     // Show fetched rules in a toast-friendly format
-    showToast('✅ Rules fetched! Console log માં જુઓ.');
-    console.log('[UgharaNi] Current Firebase Rules:', JSON.stringify(data, null, 2));
+    const codeEl = document.getElementById('fb-user-rules-code');
+    if (codeEl) codeEl.textContent = JSON.stringify(data, null, 2);
+    showToast('✅ Rules fetched! નીચે જુઓ.');
   } catch(e) {
     fbSetRulesStatus('error', '❌ Fetch failed: ' + e.message);
     showToast('❌ Rules fetch failed: ' + e.message, 4000);
@@ -5884,6 +6555,21 @@ function deleteKhata() {
 
 /* ── INIT ── */
 if (customers.length) { activeId = customers[0].id; }
+
+// Restore in-memory dataUrls from IndexedDB for local attachments
+(async function restoreLocalAttachments() {
+  let needsRender = false;
+  for (const [cid, ents] of Object.entries(entries)) {
+    for (const ent of (ents || [])) {
+      if (ent.attachment && ent.attachment.hasLocalData && !ent.attachment.dataUrl) {
+        const dataUrl = await idbGetAttach(ent.id);
+        if (dataUrl) { ent.attachment.dataUrl = dataUrl; needsRender = true; }
+      }
+    }
+  }
+  if (needsRender) { renderCustBook(); renderDayScreen(); renderCustColumn(); }
+})();
+
 renderDayScreen();
 renderCustColumn();
 applyLanguage();
@@ -5916,6 +6602,307 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'ocean', false);
     if (localStorage.getItem('ug_fb_auto_connect') === '1') { fbConnect(); }
   } catch(e) { /* silent fail — user can log in manually */ }
 })();
+
+/* ══════════════════════════════════════════
+   ATTACHMENT FEATURE
+   ══════════════════════════════════════════ */
+
+let _attachCustId = null;
+let _attachEntId  = null;
+
+/* Open source picker */
+function openAttachSource(custId, entId) {
+  _attachCustId = custId;
+  _attachEntId  = entId;
+  document.getElementById('attach-source-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeAttachSource() {
+  document.getElementById('attach-source-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  // Note: _attachCustId and _attachEntId are NOT nulled here
+  // because handleAttachFile() still needs them after modal closes.
+  // They get reset in openAttachSource() on next open.
+}
+
+/* Trigger gallery or camera input */
+function triggerAttachInput(source) {
+  const inputId = source === 'camera' ? 'attach-file-camera' : 'attach-file-gallery';
+  const el = document.getElementById(inputId);
+  el.value = '';
+  el.onchange = handleAttachFile;
+  el.click();
+}
+
+/* Compress image to under 100 KB using canvas */
+async function compressImageUnder100KB(file) {
+  return new Promise((resolve) => {
+    if (file.type === 'application/pdf') { resolve(file); return; }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      let quality = 0.85;
+      let w = img.width, h = img.height;
+      // Scale down if very large
+      const maxDim = 1200;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+        else       { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+
+      function tryCompress(q) {
+        canvas.toBlob((blob) => {
+          if (!blob) { resolve(file); return; }
+          if (blob.size <= 100 * 1024 || q <= 0.05) {
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+          } else {
+            tryCompress(Math.max(q - 0.1, 0.05));
+          }
+        }, 'image/jpeg', q);
+      }
+      tryCompress(quality);
+    };
+    img.onerror = () => { resolve(file); };
+    img.src = url;
+  });
+}
+
+/* ── Upload to Firebase Storage via REST API ── */
+async function fbStorageUpload(blob, fileName) {
+  // Storage bucket = projectId + '.firebasestorage.app' or '.appspot.com'
+  const projectId = fbConfig.projectId;
+  const bucket = projectId + '.firebasestorage.app';
+  const path = encodeURIComponent('ugharani-attachments/' + fileName);
+  const authParam = fbAuthToken ? '?uploadType=media&name=' + path + '&auth=' + encodeURIComponent(fbAuthToken)
+                                : '?uploadType=media&name=' + path;
+  const uploadUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o${authParam}`;
+  const res = await fetch(uploadUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': blob.type || 'application/octet-stream' },
+    body: blob
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Storage upload failed: HTTP ' + res.status);
+  }
+  const data = await res.json();
+  // Build public download URL
+  const downloadUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${path}?alt=media`;
+  return { downloadUrl, storagePath: 'ugharani-attachments/' + fileName };
+}
+
+/* Handle selected file */
+async function handleAttachFile(e) {
+  closeAttachSource();
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const MAX = 15 * 1024 * 1024;
+  if (file.size > MAX) { showToast('⚠️ ફાઈલ 15 MB કરતા મોટી છે'); return; }
+
+  showToast('⏳ ફાઈલ compress થઈ રહી છે…');
+
+  try {
+    const compressed = await compressImageUnder100KB(file);
+    const finalKB = (compressed.size / 1024).toFixed(1);
+
+    const ent = (entries[_attachCustId] || []).find(x => x.id === _attachEntId);
+    if (!ent) return;
+
+    // ── Firebase connected → upload to Storage ──
+    if (fbConnected && fbConfig && fbConfig.projectId) {
+      showToast('⬆️ Firebase Storage માં upload…');
+      try {
+        const fileName = _attachEntId + '_' + Date.now() + (compressed.type === 'application/pdf' ? '.pdf' : '.jpg');
+        const { downloadUrl, storagePath } = await fbStorageUpload(compressed, fileName);
+        ent.attachment = {
+          url: downloadUrl,          // Firebase Storage URL
+          storagePath,               // for deletion later
+          name: compressed.name || file.name,
+          type: compressed.type,
+          synced: true               // flag: stored in Firebase
+        };
+        save();
+        // Push updated entries to Firebase Realtime DB
+        await fbPush();
+        renderCustBook();
+        renderDayScreen();
+        showToast('✅ Firebase Storage માં save! (' + finalKB + ' KB) ☁️');
+        return;
+      } catch (fbErr) {
+        showToast('⚠️ Firebase upload નિષ્ફળ, local save કરે છે… ' + fbErr.message);
+        // Fall through to local save
+      }
+    }
+
+    // ── Offline / Firebase not connected → IndexedDB + metadata in entries ──
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      // Save binary to IndexedDB (no size limit)
+      await idbSaveAttach(_attachEntId, dataUrl);
+      // Store only metadata in entries (not the large dataUrl)
+      ent.attachment = {
+        dataUrl: dataUrl,            // keep in-memory for immediate view
+        name: compressed.name || file.name,
+        type: compressed.type,
+        synced: false,
+        hasLocalData: true
+      };
+      save();  // saves metadata only to localStorage (no quota issue)
+      renderCustBook();
+      renderDayScreen();
+      showToast('✅ Local save! (' + finalKB + ' KB) 📱  [Firebase connect કરો sync માટે]');
+    };
+    reader.readAsDataURL(compressed);
+
+  } catch (err) {
+    showToast('❌ ફાઈલ save નહીં થઈ: ' + err.message);
+  }
+}
+
+/* ── After Firebase connect: auto-upload any pending local attachments ── */
+async function fbSyncPendingAttachments() {
+  if (!fbConnected || !fbConfig || !fbConfig.projectId) return;
+  let synced = 0;
+  for (const custId of Object.keys(entries)) {
+    for (const ent of (entries[custId] || [])) {
+      if (ent.attachment && (ent.attachment.dataUrl || ent.attachment.hasLocalData) && !ent.attachment.synced) {
+        try {
+          // Load dataUrl from IndexedDB if not in memory
+          let dataUrl = ent.attachment.dataUrl;
+          if (!dataUrl && ent.attachment.hasLocalData) {
+            dataUrl = await idbGetAttach(ent.id);
+          }
+          if (!dataUrl) continue;
+          // Convert dataUrl back to blob
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          const fileName = ent.id + '_' + Date.now() + (ent.attachment.type === 'application/pdf' ? '.pdf' : '.jpg');
+          const { downloadUrl, storagePath } = await fbStorageUpload(blob, fileName);
+          // Delete from IndexedDB since now synced to Firebase
+          await idbDeleteAttach(ent.id);
+          ent.attachment = {
+            url: downloadUrl,
+            storagePath,
+            name: ent.attachment.name,
+            type: ent.attachment.type,
+            synced: true
+          };
+          synced++;
+        } catch(e) { /* skip this one */ }
+      }
+    }
+  }
+  if (synced > 0) {
+    save();
+    await fbPush();
+    renderCustBook();
+    renderDayScreen();
+    showToast('☁️ ' + synced + ' pending attachment(s) Firebase માં sync થઈ!');
+  }
+}
+
+/* View attachment */
+async function viewAttach(custId, entId) {
+  const ent = (entries[custId] || []).find(x => x.id === entId);
+  if (!ent || !ent.attachment) return;
+  _attachCustId = custId;
+  _attachEntId  = entId;
+  const body  = document.getElementById('attach-modal-body');
+
+  // Show modal with loading state
+  document.getElementById('attach-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  body.innerHTML = '<div style="color:#92600a;font-size:14px;">⏳ લોડ થઈ રહ્યું છે…</div>';
+
+  const syncBadge = ent.attachment.synced
+    ? '<span style="font-size:10px;background:#e6f5ed;color:#1a7a4a;border-radius:4px;padding:1px 6px;margin-left:6px;">☁️ Firebase</span>'
+    : '<span style="font-size:10px;background:#fdf3e0;color:#92600a;border-radius:4px;padding:1px 6px;margin-left:6px;">📱 Local</span>';
+  document.getElementById('attach-modal-title').innerHTML = '📎 ' + (ent.attachment.name || 'ફાઈલ') + syncBadge;
+
+  // Get src: Firebase URL, or in-memory dataUrl, or load from IndexedDB
+  let src = ent.attachment.url || ent.attachment.dataUrl || null;
+  if (!src && ent.attachment.hasLocalData) {
+    src = await idbGetAttach(entId);
+    if (src) {
+      // Restore to in-memory for future use
+      ent.attachment.dataUrl = src;
+    }
+  }
+
+  if (!src) {
+    body.innerHTML = '<div style="color:#b91c1c;font-size:14px;">❌ ફાઈલ મળી નહિ. કદાચ Delete થઈ ગઈ છે.</div>';
+    return;
+  }
+
+  if (ent.attachment.type === 'application/pdf') {
+    body.innerHTML = `<iframe src="${src}"></iframe>`;
+  } else {
+    body.innerHTML = `<img src="${src}" alt="attachment">`;
+  }
+}
+function closeAttachModal() {
+  document.getElementById('attach-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('attach-modal-body').innerHTML = '';
+}
+async function deleteCurrentAttach() {
+  if (!_attachCustId || !_attachEntId) return;
+  const ent = (entries[_attachCustId] || []).find(x => x.id === _attachEntId);
+  if (!ent || !ent.attachment) { closeAttachModal(); return; }
+
+  // If stored in Firebase Storage, delete from there too
+  if (ent.attachment.synced && ent.attachment.storagePath && fbConfig && fbConfig.projectId) {
+    try {
+      const bucket = fbConfig.projectId + '.firebasestorage.app';
+      const path = encodeURIComponent(ent.attachment.storagePath);
+      const authQ = fbAuthToken ? '?auth=' + encodeURIComponent(fbAuthToken) : '';
+      await fetch(`https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${path}${authQ}`, { method: 'DELETE' });
+    } catch(e) { /* silent */ }
+  }
+
+  // Also delete from IndexedDB if local
+  if (!ent.attachment.synced && ent.attachment.hasLocalData) {
+    await idbDeleteAttach(_attachEntId);
+  }
+
+  delete ent.attachment;
+  save();
+  if (fbConnected) await fbPush();
+  renderCustBook();
+  renderDayScreen();
+  closeAttachModal();
+  showToast('🗑 ફાઈલ કાઢી નાખી');
+}
+async function downloadCurrentAttach() {
+  if (!_attachCustId || !_attachEntId) return;
+  const ent = (entries[_attachCustId] || []).find(x => x.id === _attachEntId);
+  if (!ent || !ent.attachment) return;
+  if (ent.attachment.url) {
+    // Firebase URL — open in new tab
+    window.open(ent.attachment.url, '_blank');
+  } else {
+    let src = ent.attachment.dataUrl;
+    if (!src && ent.attachment.hasLocalData) {
+      src = await idbGetAttach(_attachEntId);
+    }
+    if (!src) { showToast('❌ ફાઈલ મળી નહિ'); return; }
+    const a = document.createElement('a');
+    a.href = src;
+    a.download = ent.attachment.name || 'attachment';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  showToast('⬇️ Download શરૂ થઈ');
+}
+
 </script>
 
 <!-- ── GLOBAL HINT POPUP ── -->
@@ -5952,6 +6939,857 @@ function closeHintPopup() {
   document.getElementById('hint-popup-overlay').classList.remove('open');
   document.body.style.overflow = '';
 }
+</script>
+
+
+<!-- ── ATTACHMENT SOURCE PICKER ── -->
+<div id="attach-source-modal-overlay" onclick="if(event.target===this)closeAttachSource()">
+  <div id="attach-source-box">
+    <h3>📎 ફાઈલ જોડો</h3>
+    <p>JPEG, PNG અથવા PDF • 100 KB સુધી compress થશે</p>
+    <div class="attach-source-row">
+      <button class="attach-source-btn" onclick="triggerAttachInput('gallery')">
+        <span class="icon">🖼️</span>
+        <span>Gallery</span>
+        <span style="font-size:10px;color:#aaa;font-weight:400;">ફોટો/PDF</span>
+      </button>
+      <button class="attach-source-btn" onclick="triggerAttachInput('camera')">
+        <span class="icon">📷</span>
+        <span>Camera</span>
+        <span style="font-size:10px;color:#aaa;font-weight:400;">તરત ફોટો</span>
+      </button>
+    </div>
+    <input type="file" id="attach-file-gallery" class="attach-input" accept="image/jpeg,image/png,application/pdf">
+    <input type="file" id="attach-file-camera"  class="attach-input" accept="image/jpeg,image/png" capture="environment">
+  </div>
+</div>
+
+<!-- ── ATTACHMENT VIEWER ── -->
+<div id="attach-modal-overlay" onclick="if(event.target===this)closeAttachModal()">
+  <div id="attach-modal-box">
+    <div id="attach-modal-head">
+      <span id="attach-modal-title">📎 જોડેલ ફાઈલ</span>
+      <button onclick="closeAttachModal()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:18px;cursor:pointer;border-radius:6px;padding:2px 8px;">✕</button>
+    </div>
+    <div id="attach-modal-body"></div>
+    <div id="attach-modal-foot">
+      <button onclick="deleteCurrentAttach()" style="background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">🗑 કાઢો</button>
+      <button onclick="downloadCurrentAttach()" style="background:#e6f5ed;color:#1a7a4a;border:1px solid #2ea06a;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">⬇️ Download</button>
+      <button onclick="closeAttachModal()" style="background:#92600a;color:#fff;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">બંધ</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SMART PASTE MODAL ══ -->
+<div id="smart-paste-overlay" onclick="if(event.target===this)closeSmartPasteModal()"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:480px;box-shadow:0 16px 60px rgba(0,0,0,0.3);display:flex;flex-direction:column;max-height:92vh;overflow:hidden;">
+
+    <!-- Head -->
+    <div style="background:linear-gradient(135deg,#fff3e0,#fff8e1);border-bottom:2px solid #f59e0b;padding:14px 18px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#92600a;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px;">⚡</span> Smart Paste
+        </div>
+        <div style="font-size:11px;color:#b45309;margin-top:2px;">Firebase Console → SDK Config → Paste here</div>
+      </div>
+      <button onclick="closeSmartPasteModal()" style="background:rgba(0,0,0,0.07);border:none;border-radius:8px;width:30px;height:30px;font-size:16px;cursor:pointer;color:#555;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:16px 18px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;">
+
+      <!-- Step guide -->
+      <div style="background:#fff8e1;border:1px solid #fcd34d;border-radius:9px;padding:10px 13px;font-size:11px;color:#78350f;line-height:1.8;">
+        <strong style="font-size:12px;color:#92600a;">📋 કેવી રીતે:</strong><br>
+        1️⃣ Firebase Console → Project Settings<br>
+        2️⃣ Your Apps → Web App → <strong>SDK Setup &amp; Configuration</strong><br>
+        3️⃣ <code style="background:#fff;border-radius:4px;padding:1px 5px;">firebaseConfig</code> object આખો <strong>Copy</strong> કરો<br>
+        4️⃣ નીચે Paste કરો → <strong>⚡ Auto Fill</strong> દબાવો
+      </div>
+
+      <!-- Textarea -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#92600a;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+          <span>📋 અહીં Paste કરો:</span>
+          <button onclick="document.getElementById('sp-textarea').value='';spUpdatePreview('');" style="font-size:10px;background:none;border:1px solid #ccc;border-radius:5px;padding:2px 7px;cursor:pointer;color:#888;font-family:inherit;">✕ Clear</button>
+        </div>
+        <textarea id="sp-textarea" rows="8"
+          placeholder="const firebaseConfig = {&#10;  apiKey: &quot;AIzaSy...&quot;,&#10;  authDomain: &quot;project.firebaseapp.com&quot;,&#10;  databaseURL: &quot;https://project-default-rtdb.firebaseio.com&quot;,&#10;  projectId: &quot;your-project-id&quot;,&#10;  storageBucket: &quot;...&quot;,&#10;  appId: &quot;...&quot;&#10;};"
+          oninput="spUpdatePreview(this.value)"
+          style="width:100%;padding:10px 12px;border:1.5px solid #f59e0b;border-radius:9px;font-size:11px;font-family:monospace;color:#1a1008;background:#fffdf5;resize:vertical;line-height:1.7;outline:none;min-height:140px;"></textarea>
+      </div>
+
+      <!-- Live Preview -->
+      <div id="sp-preview" style="display:none;border-radius:9px;padding:11px 13px;font-size:11px;line-height:2;">
+      </div>
+
+    </div>
+
+    <!-- Foot -->
+    <div style="padding:12px 18px;border-top:1px solid #e5d7b0;display:flex;gap:8px;flex-shrink:0;">
+      <button onclick="closeSmartPasteModal()" style="padding:9px 16px;background:#fff;color:#888;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">રદ કરો</button>
+      <button id="sp-apply-btn" onclick="spApply()" disabled
+        style="flex:1;padding:9px 16px;background:#ccc;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:not-allowed;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;">
+        <span>⚡</span> Auto Fill કરો
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- ══ END SMART PASTE MODAL ══ -->
+
+<script>
+
+/* ══════════════════════════════════════════
+   SMART PASTE — Firebase Config Auto-Detect
+   ══════════════════════════════════════════ */
+
+function openSmartPasteModal() {
+  const overlay = document.getElementById('smart-paste-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  // Clear previous state
+  const ta = document.getElementById('sp-textarea');
+  if (ta) { ta.value = ''; ta.focus(); }
+  spUpdatePreview('');
+}
+
+function closeSmartPasteModal() {
+  const overlay = document.getElementById('smart-paste-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function spParse(raw) {
+  if (!raw || !raw.trim()) return null;
+  const result = {};
+
+  // Helper: extract value for a key from JS object or JSON
+  function extract(keys, text) {
+    for (const k of keys) {
+      // matches: key: "value" or key: 'value'
+      const re = new RegExp(k + '\s*:\s*["\']([^"\']+)["\']', 'i');
+      const m = text.match(re);
+      if (m && m[1]) return m[1].trim();
+    }
+    return '';
+  }
+
+  // Try JSON parse first (handles pure JSON objects)
+  try {
+    const jsonStr = raw.trim()
+      .replace(/^[^{]*\{/, '{')   // strip leading const firebaseConfig =
+      .replace(/\}[^}]*$/, '}')   // strip trailing ; or }
+      .replace(/'/g, '"')          // single → double quotes
+      .replace(/,\s*\}/g, '}')     // trailing commas
+      .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":'); // unquoted keys
+    const parsed = JSON.parse(jsonStr);
+    if (parsed.apiKey || parsed.projectId || parsed.databaseURL) {
+      result.apiKey    = parsed.apiKey       || '';
+      result.projectId = parsed.projectId    || '';
+      result.dbUrl     = parsed.databaseURL  || parsed.dbUrl || '';
+      result.authDomain = parsed.authDomain  || '';
+      result.appId     = parsed.appId        || '';
+      result.storageBucket = parsed.storageBucket || '';
+      return result;
+    }
+  } catch(e) { /* fall through to regex */ }
+
+  // Regex extraction from JS SDK snippet
+  result.apiKey       = extract(['apiKey'],                         raw);
+  result.projectId    = extract(['projectId'],                      raw);
+  result.dbUrl        = extract(['databaseURL', 'databaseUrl', 'dbUrl'], raw);
+  result.authDomain   = extract(['authDomain'],                     raw);
+  result.appId        = extract(['appId'],                          raw);
+  result.storageBucket = extract(['storageBucket'],                 raw);
+
+  if (!result.apiKey && !result.projectId && !result.dbUrl) return null;
+  return result;
+}
+
+function spUpdatePreview(raw) {
+  const preview = document.getElementById('sp-preview');
+  const applyBtn = document.getElementById('sp-apply-btn');
+  if (!preview || !applyBtn) return;
+
+  if (!raw || !raw.trim()) {
+    preview.style.display = 'none';
+    applyBtn.disabled = true;
+    applyBtn.style.background = '#ccc';
+    applyBtn.style.cursor = 'not-allowed';
+    return;
+  }
+
+  const parsed = spParse(raw);
+  if (!parsed) {
+    preview.style.display = 'block';
+    preview.style.background = '#fef2f2';
+    preview.style.border = '1.5px solid #fca5a5';
+    preview.style.color = '#b91c1c';
+    preview.innerHTML = '❌ Firebase config ઓળખી ન શકાઈ.<br><span style="font-size:10px;">Firebase Console → Project Settings → SDK snippet copy કરો</span>';
+    applyBtn.disabled = true;
+    applyBtn.style.background = '#ccc';
+    applyBtn.style.cursor = 'not-allowed';
+    return;
+  }
+
+  // Build preview rows
+  const rows = [];
+  const ok  = (label, val) => `<div>✅ <strong>${label}:</strong> <span style="font-family:monospace;background:#fff;border-radius:4px;padding:1px 6px;border:1px solid #d1fae5;">${val}</span></div>`;
+  const warn = (label, msg) => `<div>⚠️ <strong>${label}:</strong> <span style="color:#b45309;">${msg}</span></div>`;
+
+  if (parsed.apiKey)    rows.push(ok('API Key', parsed.apiKey.slice(0,14) + '…'));
+  else                  rows.push(warn('API Key', 'મળ્યો નહિ'));
+  if (parsed.projectId) rows.push(ok('Project ID', parsed.projectId));
+  else                  rows.push(warn('Project ID', 'મળ્યો નહિ'));
+  if (parsed.dbUrl)     rows.push(ok('Database URL', parsed.dbUrl));
+  else                  rows.push(warn('Database URL', 'મળ્યો નહિ — manually ભરો'));
+  if (parsed.authDomain) rows.push(ok('Auth Domain', parsed.authDomain));
+  if (parsed.appId)      rows.push(ok('App ID', parsed.appId.slice(0,20) + '…'));
+
+  preview.style.display = 'block';
+  preview.style.background = '#f0fff8';
+  preview.style.border = '1.5px solid #86efac';
+  preview.style.color = '#14532d';
+  preview.innerHTML = '<div style="font-size:11px;font-weight:800;color:#15803d;margin-bottom:6px;">🔍 Detected Fields:</div>' + rows.join('');
+
+  const hasMin = parsed.apiKey && parsed.projectId;
+  applyBtn.disabled = !hasMin;
+  applyBtn.style.background = hasMin ? 'linear-gradient(135deg,#ff6b35,#f59e0b)' : '#ccc';
+  applyBtn.style.cursor = hasMin ? 'pointer' : 'not-allowed';
+}
+
+function spApply() {
+  const ta = document.getElementById('sp-textarea');
+  if (!ta || !ta.value.trim()) { showToast('⚠️ Config paste કરો'); return; }
+
+  const parsed = spParse(ta.value);
+  if (!parsed || (!parsed.apiKey && !parsed.projectId)) {
+    showToast('❌ Config ઓળખી ન શકાઈ');
+    return;
+  }
+
+  const apiKeyEl  = document.getElementById('fb-api-key');
+  const projIdEl  = document.getElementById('fb-project-id');
+  const dbUrlEl   = document.getElementById('fb-db-url');
+
+  if (apiKeyEl  && parsed.apiKey)    apiKeyEl.value  = parsed.apiKey;
+  if (projIdEl  && parsed.projectId) projIdEl.value  = parsed.projectId;
+  if (dbUrlEl   && parsed.dbUrl)     dbUrlEl.value   = parsed.dbUrl;
+
+  // Flash green highlight on filled fields
+  [apiKeyEl, projIdEl, dbUrlEl].forEach(el => {
+    if (!el || !el.value) return;
+    el.style.transition = 'border-color 0.2s, background 0.2s';
+    el.style.background = '#f0fff8';
+    el.style.borderColor = '#2ea06a';
+    setTimeout(() => {
+      el.style.background = '';
+      el.style.borderColor = '';
+    }, 2000);
+  });
+
+  closeSmartPasteModal();
+
+  const missing = [];
+  if (!parsed.dbUrl) missing.push('Database URL');
+  if (missing.length) {
+    showToast('⚡ Fields ભરાઈ ગયા! ⚠️ ' + missing.join(', ') + ' manually ભરો — પછી 💾 Save', 5000);
+  } else {
+    showToast('⚡ Firebase config auto-fill! હવે 💾 સેવ કરો ને 🔗 Connect દબાવો.');
+  }
+}
+/* ══ END SMART PASTE ══ */
+
+</script>
+
+<!-- PeerJS for LAN P2P sync -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   LAN SYNC MODULE v2 — PeerJS (WebRTC P2P)
+   Robust auto-reconnect: stays alive as long as hotspot is on.
+   ══════════════════════════════════════════════════════════════ */
+(function() {
+
+  /* ── STATE ─────────────────────────────────────────────────── */
+  let _peer            = null;
+  let _isHost          = false;
+  let _roomCode        = null;
+  let _savedRoomCode   = null;   // for guest auto-reconnect
+  let _myPeerId        = null;   // stable guest ID (reused on reconnect)
+  let _hostConn        = null;
+  let _guestConns      = {};
+  let _autoSync        = true;
+  let _syncTimer       = null;
+  let _manualStop      = false;  // user pressed Stop — don't auto-reconnect
+  let _reconnectTimer  = null;
+  let _reconnectDelay  = 2000;   // ms, grows on repeated failure
+  let _heartbeatTimer  = null;   // ping interval for join mode
+  let _hostHeartbeatTimer = null;// ping interval for host mode
+
+  const PEER_CONFIG = {
+    debug: 0,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' }
+      ]
+    }
+  };
+
+  /* ── UTILS ──────────────────────────────────────────────────── */
+  function genCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let c = '';
+    for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
+    return c;
+  }
+
+  function setDot(color) {
+    const d = document.getElementById('lan-peer-dot');
+    if (d) d.style.background = color;
+  }
+
+  function setMsg(msg) {
+    const el = document.getElementById('lan-status-msg');
+    if (el) el.textContent = msg;
+  }
+
+  function showToastLan(msg) {
+    if (typeof showToast === 'function') showToast(msg);
+  }
+
+  function nowTime() {
+    return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  /* ── SERIALIZE DATA ─────────────────────────────────────────── */
+  function getDataPayload() {
+    const entriesClean = {};
+    for (const [cid, ents] of Object.entries(entries)) {
+      entriesClean[cid] = ents.map(e => {
+        if (e.attachment && e.attachment.dataUrl) {
+          const { dataUrl, ...meta } = e.attachment;
+          return { ...e, attachment: { ...meta, hasLocalData: true } };
+        }
+        return e;
+      });
+    }
+    return { customers, entries: entriesClean, ts: Date.now() };
+  }
+
+  /* ── APPLY received data ────────────────────────────────────── */
+  function applyData(payload, fromId) {
+    if (!payload || !Array.isArray(payload.customers)) return;
+    customers = payload.customers;
+    entries   = payload.entries || {};
+    try {
+      localStorage.setItem('ug_customers',    JSON.stringify(customers));
+      localStorage.setItem('ug_entries',      JSON.stringify(entries));
+      localStorage.setItem('ug_customers_bk', JSON.stringify(customers));
+      localStorage.setItem('ug_entries_bk',   JSON.stringify(entries));
+    } catch(e) {}
+    renderCustColumn();
+    renderDayScreen();
+    if (activeId && document.getElementById('cust-modal')?.classList.contains('open')) {
+      renderCustBook();
+    }
+    setMsg('🔄 Synced from ' + (fromId || 'peer') + ' at ' + nowTime());
+  }
+
+  /* ── BROADCAST to all guests ─────────────────────────────────── */
+  function broadcastToGuests(payload) {
+    const msg = JSON.stringify({ type: 'data-push', payload });
+    for (const id in _guestConns) {
+      try {
+        if (_guestConns[id] && _guestConns[id].open) _guestConns[id].send(msg);
+      } catch(e) {}
+    }
+  }
+
+  /* ── RECONNECT SCHEDULER ────────────────────────────────────── */
+  function scheduleReconnect(fn, label) {
+    if (_manualStop) return;
+    clearTimeout(_reconnectTimer);
+    setMsg('🟡 ' + label + ' — ' + Math.round(_reconnectDelay/1000) + 's માં retry…');
+    setDot('#f59e0b');
+    _reconnectTimer = setTimeout(function() {
+      if (!_manualStop) fn();
+    }, _reconnectDelay);
+    // Exponential backoff: 2s → 4s → 8s → max 30s
+    _reconnectDelay = Math.min(_reconnectDelay * 2, 30000);
+  }
+
+  function resetReconnectDelay() {
+    _reconnectDelay = 2000;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     HOST MODE
+   ══════════════════════════════════════════════════════════════ */
+  function _startHostPeer(code) {
+    if (_peer && !_peer.destroyed) { try { _peer.destroy(); } catch(e) {} }
+    _peer = null;
+    _guestConns = {};
+
+    setMsg('⏳ Host starting… (' + code + ')');
+    setDot('#f59e0b');
+
+    _peer = new Peer(code, PEER_CONFIG);
+
+    _peer.on('open', function(id) {
+      _roomCode = id;
+      resetReconnectDelay();
+      setDot('#22c55e');
+      setMsg('🟢 Host active — Room: ' + id + ' | ' + nowTime());
+
+      const codeEl   = document.getElementById('lan-room-code-display');
+      const box      = document.getElementById('lan-room-code-box');
+      const startBtn = document.getElementById('lan-btn-start-host');
+      const stopBtn  = document.getElementById('lan-btn-stop-host');
+      if (codeEl)   codeEl.textContent = id;
+      if (box)      box.style.display = '';
+      if (startBtn) startBtn.style.display = 'none';
+      if (stopBtn)  stopBtn.style.display = '';
+
+      // Host heartbeat: check peer server connection every 10s
+      clearInterval(_hostHeartbeatTimer);
+      _hostHeartbeatTimer = setInterval(function() {
+        if (_peer && _peer.destroyed) {
+          clearInterval(_hostHeartbeatTimer);
+          if (!_manualStop) scheduleReconnect(function() { _startHostPeer(_roomCode); }, 'Host reconnect');
+          return;
+        }
+        // Ping each guest; remove dead ones
+        for (const id in _guestConns) {
+          const conn = _guestConns[id];
+          if (!conn || !conn.open) {
+            delete _guestConns[id];
+            _updatePeersList();
+          } else {
+            try { conn.send(JSON.stringify({ type: 'ping' })); } catch(e) {}
+          }
+        }
+        const cnt = Object.keys(_guestConns).length;
+        setMsg('🟢 Host — ' + cnt + ' device(s) | ' + nowTime());
+      }, 10000);
+    });
+
+    _peer.on('connection', function(conn) {
+      const guestId = conn.peer;
+
+      conn.on('open', function() {
+        _guestConns[guestId] = conn;
+        _updatePeersList();
+        setMsg('🟢 Host — ' + Object.keys(_guestConns).length + ' device(s) connected');
+        showToastLan('📱 ' + guestId + ' connected!');
+        // Send latest data to new guest
+        try { conn.send(JSON.stringify({ type: 'data-push', payload: getDataPayload() })); } catch(e) {}
+      });
+
+      conn.on('data', function(raw) {
+        try {
+          const msg = JSON.parse(raw);
+          if (msg.type === 'ping') {
+            try { conn.send(JSON.stringify({ type: 'pong' })); } catch(e) {}
+            return;
+          }
+          if (msg.type === 'pong') return;
+          if (msg.type === 'data-push') {
+            applyData(msg.payload, guestId);
+            // Relay to other guests
+            const relay = JSON.stringify({ type: 'data-push', payload: msg.payload });
+            for (const id in _guestConns) {
+              if (id !== guestId && _guestConns[id] && _guestConns[id].open) {
+                try { _guestConns[id].send(relay); } catch(e) {}
+              }
+            }
+          }
+          if (msg.type === 'pull-request') {
+            try { conn.send(JSON.stringify({ type: 'data-push', payload: getDataPayload() })); } catch(e) {}
+          }
+        } catch(e) {}
+      });
+
+      conn.on('close', function() {
+        delete _guestConns[guestId];
+        _updatePeersList();
+        setMsg('🟢 Host — ' + Object.keys(_guestConns).length + ' device(s)');
+        showToastLan('📴 ' + guestId + ' disconnected');
+      });
+
+      conn.on('error', function() {
+        delete _guestConns[guestId];
+        _updatePeersList();
+      });
+    });
+
+    _peer.on('disconnected', function() {
+      // PeerJS server connection dropped (not WebRTC peer) — try to reconnect peer server
+      if (_manualStop) return;
+      setDot('#f59e0b');
+      setMsg('🟡 Host server disconnected — reconnecting…');
+      try { _peer.reconnect(); } catch(e) {
+        scheduleReconnect(function() { _startHostPeer(_roomCode); }, 'Host restart');
+      }
+    });
+
+    _peer.on('error', function(err) {
+      if (_manualStop) return;
+      setDot('#ef4444');
+      if (err.type === 'unavailable-id') {
+        // Someone else took this code — generate new one
+        const newCode = genCode();
+        setMsg('⚠️ Code clash — trying ' + newCode);
+        setTimeout(function() { _startHostPeer(newCode); }, 800);
+      } else if (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error' || err.type === 'socket-closed') {
+        scheduleReconnect(function() { _startHostPeer(_roomCode || genCode()); }, 'Host reconnect');
+      } else {
+        setMsg('❌ Host error: ' + err.type);
+        showToastLan('❌ LAN Host error: ' + err.type);
+      }
+    });
+  }
+
+  window.lanStartHost = function() {
+    _manualStop = false;
+    _isHost = true;
+    if (!_roomCode) _roomCode = genCode();
+    _startHostPeer(_roomCode);
+  };
+
+  window.lanStopHost = function() {
+    _manualStop = true;
+    _isHost = false;
+    clearTimeout(_reconnectTimer);
+    clearInterval(_hostHeartbeatTimer);
+    if (_peer) { try { _peer.destroy(); } catch(e) {} _peer = null; }
+    _guestConns = {};
+    setDot('#d1d5db');
+    setMsg('⚪ Host stopped');
+    const box      = document.getElementById('lan-room-code-box');
+    const peersBox = document.getElementById('lan-connected-peers');
+    const startBtn = document.getElementById('lan-btn-start-host');
+    const stopBtn  = document.getElementById('lan-btn-stop-host');
+    if (box)      box.style.display = 'none';
+    if (peersBox) peersBox.style.display = 'none';
+    if (startBtn) startBtn.style.display = '';
+    if (stopBtn)  stopBtn.style.display = 'none';
+    // Allow new host session with new code next time
+    _roomCode = null;
+  };
+
+  function _updatePeersList() {
+    const box  = document.getElementById('lan-connected-peers');
+    const list = document.getElementById('lan-peers-list');
+    if (!box || !list) return;
+    const ids = Object.keys(_guestConns);
+    if (!ids.length) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    list.innerHTML = ids.map(id =>
+      `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #d1fae5;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;"></span>
+        <span style="font-size:12px;color:#166534;">${id}</span>
+      </div>`
+    ).join('');
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     JOIN MODE — with full auto-reconnect
+   ══════════════════════════════════════════════════════════════ */
+  function _doJoin(targetCode) {
+    // Destroy old peer cleanly
+    clearInterval(_heartbeatTimer);
+    if (_peer && !_peer.destroyed) { try { _peer.destroy(); } catch(e) {} }
+    _peer = null;
+    _hostConn = null;
+
+    if (!_myPeerId) _myPeerId = 'G-' + genCode(); // stable ID for this session
+
+    setMsg('⏳ Connecting to ' + targetCode + '…');
+    setDot('#f59e0b');
+
+    _peer = new Peer(_myPeerId, PEER_CONFIG);
+
+    _peer.on('open', function() {
+      _connectToHost(targetCode);
+    });
+
+    _peer.on('disconnected', function() {
+      if (_manualStop) return;
+      setDot('#f59e0b');
+      setMsg('🟡 Peer server lost — reconnecting…');
+      try { _peer.reconnect(); } catch(e) {
+        _myPeerId = null; // get fresh ID
+        scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Reconnecting');
+      }
+    });
+
+    _peer.on('error', function(err) {
+      if (_manualStop) return;
+      if (err.type === 'peer-unavailable') {
+        setMsg('🟡 Host not reachable yet — retrying…');
+        setDot('#f59e0b');
+        // Host may be temporarily offline — keep trying
+        scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Waiting for host');
+      } else if (err.type === 'unavailable-id') {
+        // Our guest ID is taken — generate new one
+        _myPeerId = 'G-' + genCode();
+        scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Retry with new ID');
+      } else if (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error' || err.type === 'socket-closed') {
+        scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Network retry');
+      } else {
+        setMsg('❌ ' + err.type + ' — retrying…');
+        scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Retry');
+      }
+    });
+  }
+
+  function _connectToHost(targetCode) {
+    if (!_peer || _peer.destroyed) return;
+    try {
+      _hostConn = _peer.connect(targetCode, { reliable: true, serialization: 'json' });
+    } catch(e) {
+      scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Connect retry');
+      return;
+    }
+
+    // Timeout: if not open in 12s, retry
+    const openTimeout = setTimeout(function() {
+      if (!_hostConn || !_hostConn.open) {
+        setMsg('🟡 Connect timeout — retrying…');
+        scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Timeout retry');
+      }
+    }, 12000);
+
+    _hostConn.on('open', function() {
+      clearTimeout(openTimeout);
+      resetReconnectDelay();
+      setDot('#22c55e');
+      setMsg('🟢 Connected to host: ' + targetCode + ' | ' + nowTime());
+      showToastLan('✅ Host ' + targetCode + ' connected!');
+
+      const joinConnBox = document.getElementById('lan-join-connected-box');
+      const joinBtn     = document.getElementById('lan-btn-join');
+      const disconnBtn  = document.getElementById('lan-btn-disconnect-join');
+      if (joinConnBox) joinConnBox.style.display = '';
+      if (joinBtn)     joinBtn.style.display = 'none';
+      if (disconnBtn)  disconnBtn.style.display = '';
+
+      // Heartbeat: ping host every 8s, detect dead connection
+      clearInterval(_heartbeatTimer);
+      let _missedPongs = 0;
+      _heartbeatTimer = setInterval(function() {
+        if (!_hostConn || !_hostConn.open) {
+          clearInterval(_heartbeatTimer);
+          if (!_manualStop) {
+            setDot('#f59e0b');
+            setMsg('🟡 Connection lost — reconnecting…');
+            scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Reconnecting');
+          }
+          return;
+        }
+        _missedPongs++;
+        try { _hostConn.send(JSON.stringify({ type: 'ping' })); } catch(e) {}
+        // If 3 pings missed (24s) → reconnect
+        if (_missedPongs >= 3) {
+          clearInterval(_heartbeatTimer);
+          setDot('#f59e0b');
+          setMsg('🟡 Host silent — reconnecting…');
+          if (!_manualStop) scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Reconnecting');
+        }
+      }, 8000);
+
+      _hostConn.on('data', function(raw) {
+        try {
+          const msg = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+          if (msg.type === 'pong') { _missedPongs = 0; return; }
+          if (msg.type === 'ping') {
+            try { _hostConn.send(JSON.stringify({ type: 'pong' })); } catch(e) {}
+            return;
+          }
+          if (msg.type === 'data-push') {
+            _missedPongs = 0;
+            applyData(msg.payload, targetCode);
+          }
+        } catch(e) {}
+      });
+    });
+
+    _hostConn.on('close', function() {
+      clearTimeout(openTimeout);
+      clearInterval(_heartbeatTimer);
+      if (_manualStop) return;
+      setDot('#f59e0b');
+      setMsg('🟡 Host closed — reconnecting…');
+      const joinConnBox = document.getElementById('lan-join-connected-box');
+      const joinBtn     = document.getElementById('lan-btn-join');
+      const disconnBtn  = document.getElementById('lan-btn-disconnect-join');
+      if (joinConnBox) joinConnBox.style.display = 'none';
+      if (joinBtn)     joinBtn.style.display = 'none'; // keep hidden — reconnecting
+      if (disconnBtn)  disconnBtn.style.display = '';
+      scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Reconnecting');
+    });
+
+    _hostConn.on('error', function(err) {
+      clearTimeout(openTimeout);
+      clearInterval(_heartbeatTimer);
+      if (_manualStop) return;
+      setDot('#f59e0b');
+      scheduleReconnect(function() { _doJoin(_savedRoomCode); }, 'Reconnecting');
+    });
+  }
+
+  window.lanJoin = function() {
+    const codeEl = document.getElementById('lan-join-code-input');
+    const code   = (codeEl?.value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length < 4) { showToastLan('⚠️ Room Code enter કરો (4-6 chars)'); return; }
+    _manualStop      = false;
+    _isHost          = false;
+    _savedRoomCode   = code;
+    _myPeerId        = null; // fresh ID for new join session
+    resetReconnectDelay();
+    _doJoin(code);
+  };
+
+  window.lanDisconnectJoin = function() {
+    _manualStop = true;
+    clearTimeout(_reconnectTimer);
+    clearInterval(_heartbeatTimer);
+    if (_hostConn) { try { _hostConn.close(); } catch(e) {} _hostConn = null; }
+    if (_peer)     { try { _peer.destroy();  } catch(e) {} _peer = null; }
+    _savedRoomCode = null;
+    _myPeerId      = null;
+    setDot('#d1d5db');
+    setMsg('⚪ Disconnected');
+    const joinConnBox = document.getElementById('lan-join-connected-box');
+    const joinBtn     = document.getElementById('lan-btn-join');
+    const disconnBtn  = document.getElementById('lan-btn-disconnect-join');
+    if (joinConnBox) joinConnBox.style.display = 'none';
+    if (joinBtn)     joinBtn.style.display = '';
+    if (disconnBtn)  disconnBtn.style.display = 'none';
+    // Clear input so user knows they're disconnected
+    const codeInp = document.getElementById('lan-join-code-input');
+    if (codeInp) codeInp.value = '';
+  };
+
+  /* ── MANUAL PULL / PUSH ─────────────────────────────────────── */
+  window.lanPullFromHost = function() {
+    if (!_hostConn || !_hostConn.open) { showToastLan('⚠️ Host connected nathi'); return; }
+    try { _hostConn.send(JSON.stringify({ type: 'pull-request' })); } catch(e) {}
+    setMsg('⬇️ Pulling from host…');
+  };
+
+  window.lanPushToHost = function() {
+    if (!_hostConn || !_hostConn.open) { showToastLan('⚠️ Host connected nathi'); return; }
+    try { _hostConn.send(JSON.stringify({ type: 'data-push', payload: getDataPayload() })); } catch(e) {}
+    setMsg('⬆️ Pushed to host at ' + nowTime());
+    showToastLan('⬆️ Data host ને mokliyo');
+  };
+
+  /* ── AUTO SYNC ──────────────────────────────────────────────── */
+  window.lanSyncTrigger = function() {
+    if (!_autoSync) return;
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(function() {
+      const payload = getDataPayload();
+      if (_isHost) {
+        broadcastToGuests(payload);
+        const cnt = Object.keys(_guestConns).length;
+        if (cnt) setMsg('⬆️ Synced to ' + cnt + ' device(s) at ' + nowTime());
+      } else if (_hostConn && _hostConn.open) {
+        try { _hostConn.send(JSON.stringify({ type: 'data-push', payload })); } catch(e) {}
+        setMsg('⬆️ Synced to host at ' + nowTime());
+      }
+    }, 600);
+  };
+
+  /* ── TOGGLE AUTO SYNC ───────────────────────────────────────── */
+  window.lanToggleAutoSync = function(val) {
+    _autoSync = val;
+    showToastLan(val ? '⚡ Auto Sync ON' : '🔇 Auto Sync OFF');
+  };
+
+  /* ── COPY ROOM CODE ─────────────────────────────────────────── */
+  window.lanCopyCode = function() {
+    if (!_roomCode) return;
+    navigator.clipboard?.writeText(_roomCode)
+      .then(() => showToastLan('📋 Code copied: ' + _roomCode))
+      .catch(() => showToastLan('Code: ' + _roomCode));
+  };
+
+  /* ── TAB SWITCH ─────────────────────────────────────────────── */
+  window.lanShowTab = function(tab) {
+    const hostPanel = document.getElementById('lan-host-panel');
+    const joinPanel = document.getElementById('lan-join-panel');
+    const tabHost   = document.getElementById('lan-tab-host');
+    const tabJoin   = document.getElementById('lan-tab-join');
+    if (tab === 'host') {
+      if (hostPanel) hostPanel.style.display = '';
+      if (joinPanel) joinPanel.style.display = 'none';
+      if (tabHost) { tabHost.style.background = '#0369a1'; tabHost.style.color = '#fff'; }
+      if (tabJoin) { tabJoin.style.background = '#fff';    tabJoin.style.color = '#0369a1'; }
+    } else {
+      if (hostPanel) hostPanel.style.display = 'none';
+      if (joinPanel) joinPanel.style.display = '';
+      if (tabHost) { tabHost.style.background = '#fff';    tabHost.style.color = '#0369a1'; }
+      if (tabJoin) { tabJoin.style.background = '#0369a1'; tabJoin.style.color = '#fff'; }
+    }
+  };
+
+  /* ── PAGE VISIBILITY: resume on foreground ──────────────────── */
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState !== 'visible' || _manualStop) return;
+    // Give browser 1s to restore network after coming back to foreground
+    setTimeout(function() {
+      if (_isHost && _peer && _peer.destroyed) {
+        setMsg('🟡 Woke up — restarting host…');
+        _startHostPeer(_roomCode || genCode());
+      } else if (!_isHost && _savedRoomCode && (!_hostConn || !_hostConn.open)) {
+        setMsg('🟡 Woke up — reconnecting to ' + _savedRoomCode + '…');
+        _doJoin(_savedRoomCode);
+      }
+    }, 1000);
+  });
+
+})(); /* END LAN SYNC MODULE v2 */
+
+/* ── SETTINGS ACCORDION ── */
+function toggleSettingsSection(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  if (body) body.classList.toggle('open', !isOpen);
+}
+
+/* ── PATCH openSettingsModal to refresh accordion state ── */
+(function() {
+  const _orig = window.openSettingsModal;
+  window.openSettingsModal = function() {
+    if (_orig) _orig.call(this);
+    // Re-sync app name input
+    try {
+      const nameEl = document.getElementById('inp-app-name');
+      if (nameEl) nameEl.value = localStorage.getItem('appName') || '';
+    } catch(e) {}
+  };
+})();
+
+
+(function() {
+  const _origSave = save;
+  window.save = function() {
+    _origSave.call(this);
+    if (typeof lanSyncTrigger === 'function') lanSyncTrigger();
+  };
+})();
 </script>
 
 </body>
