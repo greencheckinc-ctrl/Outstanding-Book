@@ -189,14 +189,15 @@
   #app { padding: 14px 16px; max-width: 920px; margin: 0 auto; }
   .app-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 16px; flex-wrap: nowrap; gap: 8px;
     background: var(--page); border: 1.5px solid var(--border);
     border-radius: var(--radius); padding: 12px 16px;
     box-shadow: var(--shadow);
   }
-  .app-title { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: 0.5px; line-height: 1.2; }
-  .app-sub { font-size: 11px; color: var(--ink2); margin-top: 2px; }
-  .header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .app-header > div:first-child { flex: 1; min-width: 0; overflow: hidden; }
+  .app-title { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: 0.5px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .app-sub { font-size: 11px; color: var(--ink2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header-actions { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; flex-shrink: 0; }
 
   /* ── BUTTONS ── */
   .btn-new     { padding: 8px 16px; background: var(--page); color: var(--gold); border: 1.5px solid var(--gold); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
@@ -488,7 +489,7 @@
   .settings-section-header-left { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
   .settings-section-icon { font-size: 18px; flex-shrink: 0; }
   .settings-section-title {
-    font-size: 11.5px; font-weight: 800; color: var(--gold);
+    font-size: 14px; font-weight: 800; color: var(--gold);
     letter-spacing: 0.2px;
     margin: 0; padding: 0; border: none; text-transform: none;
     line-height: 1.35; word-break: break-word;
@@ -497,8 +498,30 @@
     font-size: 10px; color: var(--gold); transition: transform 0.25s; flex-shrink: 0;
   }
   .settings-section-header.open .settings-section-arrow { transform: rotate(180deg); }
-  .settings-section-body { display: none; padding: 13px 14px; }
+  .settings-section-body { display: none; padding: 13px 14px; font-size: 14px; }
   .settings-section-body.open { display: block; }
+  /* Settings modal — all text 14px */
+  #settings-modal .modal-body { font-size: 14px; }
+  #settings-modal .ps-label,
+  #settings-modal .ps-section-title,
+  #settings-modal .firebase-field label,
+  #settings-modal .firebase-field input,
+  #settings-modal .firebase-status-text,
+  #settings-modal .firebase-last-sync,
+  #settings-modal .firebase-hint,
+  #settings-modal .backup-card-title,
+  #settings-modal .backup-card-desc,
+  #settings-modal .backup-history-title,
+  #settings-modal .backup-history-name,
+  #settings-modal .backup-history-meta,
+  #settings-modal .sec-field label,
+  #settings-modal .sec-card-title,
+  #settings-modal .sec-card-desc,
+  #settings-modal .toggle-label,
+  #settings-modal label,
+  #settings-modal input,
+  #settings-modal select,
+  #settings-modal button { font-size: 14px; }
   .lang-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
   .lang-btn { flex: 1; padding: 10px 16px; border: none; background: var(--page); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--ink2); transition: all 0.15s; }
   .lang-btn.active { background: var(--gold); color: #fff; }
@@ -1280,7 +1303,7 @@
       </div>
 
       <!-- ── 2. LANGUAGE ── -->
-      <div class="settings-section">
+      <div class="settings-section full-width">
         <div class="settings-section-header" onclick="toggleSettingsSection(this)">
           <div class="settings-section-header-left">
             <span class="settings-section-icon">🌐</span>
@@ -1297,7 +1320,7 @@
       </div>
 
       <!-- ── 3. COLOUR THEME ── -->
-      <div class="settings-section">
+      <div class="settings-section full-width">
         <div class="settings-section-header" onclick="toggleSettingsSection(this)">
           <div class="settings-section-header-left">
             <span class="settings-section-icon">🎨</span>
