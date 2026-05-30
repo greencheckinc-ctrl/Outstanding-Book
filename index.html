@@ -2587,7 +2587,7 @@ function renderCustBook() {
       const badgeClass = d > 60 ? 'days-over' : d > 30 ? 'days-warn' : 'days-ok';
       const daysHtml = `<span class="days-badge ${badgeClass}">${d} days</span>`;
       const hasFile = !!(e.attachment && (e.attachment.dataUrl || e.attachment.url || e.attachment.hasLocalData));
-      const isCloud = !!(e.attachment && e.attachment.synced && e.attachment.url);
+      const isCloud = !!(e.attachment && e.attachment.synced);
       const attachBtn = hasFile
         ? `<button class="btn-attach has-file" onclick="viewAttach('${activeId}','${e.id}')" title="${isCloud ? '☁️ Firebase Storage' : '📱 Local only'}">${isCloud ? '☁️' : '📎'} જુઓ</button>`
         : `<button class="btn-attach" onclick="openAttachSource('${activeId}','${e.id}')" title="ફાઈલ જોડો">📎</button>`;
@@ -2837,7 +2837,7 @@ function renderDayScreen() {
   }
   document.getElementById('day-entries').innerHTML = allToday.map(e=>{
     const hasFile = !!(e.attachment && (e.attachment.dataUrl || e.attachment.url || e.attachment.hasLocalData));
-    const isCloud = !!(e.attachment && e.attachment.synced && e.attachment.url);
+    const isCloud = !!(e.attachment && e.attachment.synced);
     const viewBtn = (e.type === 'debit' && hasFile)
       ? `<button class="de-attach-btn" onclick="event.stopPropagation();viewAttach('${e.custId}','${e.id}')" title="${isCloud ? '☁️ Firebase' : '📱 Local'}">${isCloud ? '☁️' : '📎'} જુઓ</button>`
       : '';
@@ -2973,7 +2973,7 @@ function renderBook() {
       const badgeClass = d > 60 ? 'days-over' : d > 30 ? 'days-warn' : 'days-ok';
       const daysHtml = `<span class="days-badge ${badgeClass}">${d} days</span>`;
       const hasFile = !!(e.attachment && (e.attachment.dataUrl || e.attachment.url || e.attachment.hasLocalData));
-      const isCloud = !!(e.attachment && e.attachment.synced && e.attachment.url);
+      const isCloud = !!(e.attachment && e.attachment.synced);
       const attachBtn = hasFile
         ? `<button class="btn-attach has-file" onclick="viewAttach('${activeId}','${e.id}')" title="${isCloud ? '☁️ Firebase Storage' : '📱 Local only'}">${isCloud ? '☁️' : '📎'} જુઓ</button>`
         : `<button class="btn-attach" onclick="openAttachSource('${activeId}','${e.id}')" title="ફાઈલ જોડો">📎</button>`;
@@ -6154,7 +6154,18 @@ async function fbPush() {
     let _delCusts = []; let _delEnts = {};
     try { _delCusts = JSON.parse(localStorage.getItem('ug_deleted_customers') || '[]'); } catch(e) {}
     try { _delEnts  = JSON.parse(localStorage.getItem('ug_deleted_entries')   || '{}'); } catch(e) {}
-    const payload = { customers, entries, syncedAt: new Date().toISOString(), deletedCustomers: _delCusts, deletedEntries: _delEnts };
+    // Strip large base64 dataUrls before pushing to Firebase (images stored separately under attachments/)
+    const entriesForFb = {};
+    for (const [cid, ents] of Object.entries(entries)) {
+      entriesForFb[cid] = ents.map(e => {
+        if (e.attachment && e.attachment.dataUrl) {
+          const { dataUrl, ...meta } = e.attachment;
+          return { ...e, attachment: { ...meta, hasLocalData: false, synced: true } };
+        }
+        return e;
+      });
+    }
+    const payload = { customers, entries: entriesForFb, syncedAt: new Date().toISOString(), deletedCustomers: _delCusts, deletedEntries: _delEnts };
     const url = fbDbUrl('data');
     const res = await fetch(url, {
       method: 'PUT',
@@ -9641,10 +9652,17 @@ async function viewAttach(custId, entId) {
     src = await idbGetAttach(entId);
     if (src) ent.attachment.dataUrl = src;
   }
-  if (!src && ent.attachment.synced && fbConnected) {
+  if (!src && fbConnected && fbConfig && fbConfig.dbUrl) {
     body.innerHTML = '<div style="color:#1a7a4a;font-size:13px;">⬇️ Firebase DB માંથી load…</div>';
     src = await fbBase64Download(entId, custId);
-    if (src) ent.attachment.dataUrl = src;
+    if (src) {
+      ent.attachment.dataUrl = src;
+      // Mark synced and cache in IDB for this device
+      ent.attachment.synced = true;
+      ent.attachment.hasLocalData = true;
+      try { await idbSaveAttach(entId, src); } catch(e) {}
+      save();
+    }
   }
 
   if (!src) {
