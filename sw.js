@@ -1,26 +1,26 @@
-// Outstanding Record Book — Service Worker v1
-const CACHE_NAME = 'outstanding-book-v1';
-const ASSETS = [
+// ── Outstanding Record Book — Service Worker ──
+const CACHE_NAME = 'ugharani-v3';
+
+// Files to pre-cache on install
+const PRECACHE_URLS = [
   './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-180.png',
-  './icon-32.png'
+  './index.html'
 ];
 
-// Install: cache all assets
+// ── INSTALL: pre-cache app shell ──
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS);
+      return cache.addAll(PRECACHE_URLS).catch(function(err) {
+        // If index.html not found (e.g. named differently), just open cache
+        console.warn('[SW] Pre-cache partial fail:', err.message);
+      });
     })
   );
   self.skipWaiting();
 });
 
-// Activate: remove old caches
+// ── ACTIVATE: delete old caches ──
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -33,22 +33,40 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-// Fetch: cache-first strategy
+// ── FETCH: network-first with cache fallback ──
 self.addEventListener('fetch', function(e) {
+  if (e.request.method !== 'GET') return;
+
+  var url = e.request.url;
+
+  // Never intercept Firebase, Supabase, Google APIs, Anthropic — always live
+  if (
+    url.includes('firebaseio.com') ||
+    url.includes('googleapis.com') ||
+    url.includes('supabase.co') ||
+    url.includes('anthropic.com') ||
+    url.includes('fonts.gstatic.com') ||
+    url.includes('fonts.googleapis.com')
+  ) return;
+
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      return cached || fetch(e.request).then(function(response) {
-        // Cache new requests dynamically
-        if (response && response.status === 200 && response.type === 'basic') {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(e.request, clone);
-          });
+    fetch(e.request).then(function(response) {
+      // Cache successful responses
+      if (response && response.status === 200) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(e.request, clone);
+        });
+      }
+      return response;
+    }).catch(function() {
+      // Network failed — serve from cache
+      return caches.match(e.request).then(function(cached) {
+        if (cached) return cached;
+        // Fallback to app shell for navigation requests
+        if (e.request.mode === 'navigate') {
+          return caches.match('./') || caches.match('./index.html');
         }
-        return response;
-      }).catch(function() {
-        // Offline fallback
-        return caches.match('./index.html');
       });
     })
   );
