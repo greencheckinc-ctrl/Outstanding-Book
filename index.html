@@ -9,9 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="Record Book">
   <meta name="theme-color" content="#92600a">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <title>Outstanding Record Book</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" rel="stylesheet">
@@ -1115,20 +1113,7 @@
   }</style>
 
 <div id="app">
-  <div class="app-header" style="position:relative;">
-    <!-- Logout button — top-right inside header, always visible -->
-    <button id="header-logout-btn" onclick="fbEmailLogout()"
-      style="display:flex;position:absolute;top:8px;right:10px;z-index:10;
-             align-items:center;gap:4px;
-             padding:4px 11px;
-             background:#fce8e8;color:#b91c1c;
-             border:1.5px solid #f5a5a5;border-radius:20px;
-             font-size:12px;font-weight:700;
-             cursor:pointer;font-family:inherit;
-             box-shadow:0 1px 6px rgba(185,28,28,0.15);
-             white-space:nowrap;">
-      🚪 Logout
-    </button>
+  <div class="app-header">
     <div style="display:flex;align-items:center;gap:12px;">
       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="48" height="48" style="flex-shrink:0;">
         <ellipse cx="60" cy="108" rx="38" ry="6" fill="rgba(0,0,0,0.08)"/>
@@ -4346,7 +4331,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 <\/script>
-
 </body>
     </html>
   `);
@@ -6054,15 +6038,6 @@ function fbEmailLogout() {
   fbUpdateAuthUI(false);
   const b3 = document.getElementById('fb-pass-saved-badge'); if (b3) b3.style.display = 'none';
   showToast('🚪 Logout સફળ');
-
-  // PIN હોય તો PIN lock screen બતાવો, નહિ તો page reload કરો
-  setTimeout(function() {
-    if (secIsPinSet()) {
-      showPinLock();
-    } else {
-      window.location.reload();
-    }
-  }, 800);
 }
 
 function fbSetAuthStatus(msg) {
@@ -6077,23 +6052,15 @@ function fbUpdateAuthUI(loggedIn) {
   const loginBtn    = document.getElementById('fb-btn-email-login');
   const registerBtn = document.getElementById('fb-btn-email-register');
   const logoutBtn   = document.getElementById('fb-btn-email-logout');
-  const headerLogoutBtn = document.getElementById('header-logout-btn');
-
-  // Header logout button — always visible (login state ને ધ્યાનમાં ન લો)
-  if (headerLogoutBtn) {
-    headerLogoutBtn.style.display = 'flex';
-  }
-
-  // Modal buttons — only update if modal is in DOM
   if (!loginBtn) return;
   if (loggedIn) {
     loginBtn.style.display    = 'none';
     registerBtn.style.display = 'none';
-    if (logoutBtn) logoutBtn.style.display = '';
+    logoutBtn.style.display   = '';
   } else {
     loginBtn.style.display    = '';
     registerBtn.style.display = '';
-    if (logoutBtn) logoutBtn.style.display = 'none';
+    logoutBtn.style.display   = 'none';
   }
 }
 
@@ -9539,7 +9506,7 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'ocean', false);
       }
     );
     const data = await res.json();
-    if (data.error) { localStorage.removeItem('ug_fb_auth_password'); fbUpdateAuthUI(false); return; }
+    if (data.error) { localStorage.removeItem('ug_fb_auth_password'); return; }
     fbAuthToken = data.idToken;
     fbAuthUser  = data.email;
     const afEmail = document.getElementById('fb-auth-email');
@@ -9549,7 +9516,7 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'ocean', false);
     fbUpdateAuthUI(true);
     try { fbSetAuthStatus('✅ Auto-login સફળ: ' + data.email); } catch(e){}
     if (localStorage.getItem('ug_fb_auto_connect') === '1') { fbConnect(); }
-  } catch(e) { fbUpdateAuthUI(false); /* silent fail */ }
+  } catch(e) { /* silent fail */ }
 })();
 
 /* ══════════════════════════════════════════
@@ -11437,7 +11404,7 @@ function acctSwitchTo(id) {
         }
       }
 
-      if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(!!fbAuthToken);
+      if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
 
       // Connect
       if (typeof fbSetStatus === 'function') fbSetStatus('connecting', '⏳ Connecting…');
@@ -12345,5 +12312,4 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-
 </body>
