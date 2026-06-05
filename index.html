@@ -1116,7 +1116,7 @@
 
 <div id="app">
   <div class="app-header" style="position:relative;">
-    <!-- Logout button — top-right inside header -->
+    <!-- Logout button — top-right inside header, always visible -->
     <button id="header-logout-btn" onclick="fbEmailLogout()"
       style="display:flex;position:absolute;top:8px;right:10px;z-index:10;
              align-items:center;gap:4px;
@@ -6078,17 +6078,22 @@ function fbUpdateAuthUI(loggedIn) {
   const registerBtn = document.getElementById('fb-btn-email-register');
   const logoutBtn   = document.getElementById('fb-btn-email-logout');
   const headerLogoutBtn = document.getElementById('header-logout-btn');
+
+  // Header logout button — always visible (login state ને ધ્યાનમાં ન લો)
+  if (headerLogoutBtn) {
+    headerLogoutBtn.style.display = 'flex';
+  }
+
+  // Modal buttons — only update if modal is in DOM
   if (!loginBtn) return;
   if (loggedIn) {
     loginBtn.style.display    = 'none';
     registerBtn.style.display = 'none';
-    logoutBtn.style.display   = '';
-    if (headerLogoutBtn) headerLogoutBtn.style.display = '';
+    if (logoutBtn) logoutBtn.style.display = '';
   } else {
     loginBtn.style.display    = '';
     registerBtn.style.display = '';
-    logoutBtn.style.display   = 'none';
-    if (headerLogoutBtn) headerLogoutBtn.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
   }
 }
 
@@ -9534,7 +9539,7 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'ocean', false);
       }
     );
     const data = await res.json();
-    if (data.error) { localStorage.removeItem('ug_fb_auth_password'); return; }
+    if (data.error) { localStorage.removeItem('ug_fb_auth_password'); fbUpdateAuthUI(false); return; }
     fbAuthToken = data.idToken;
     fbAuthUser  = data.email;
     const afEmail = document.getElementById('fb-auth-email');
@@ -9544,7 +9549,7 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'ocean', false);
     fbUpdateAuthUI(true);
     try { fbSetAuthStatus('✅ Auto-login સફળ: ' + data.email); } catch(e){}
     if (localStorage.getItem('ug_fb_auto_connect') === '1') { fbConnect(); }
-  } catch(e) { /* silent fail */ }
+  } catch(e) { fbUpdateAuthUI(false); /* silent fail */ }
 })();
 
 /* ══════════════════════════════════════════
@@ -11432,7 +11437,7 @@ function acctSwitchTo(id) {
         }
       }
 
-      if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
+      if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(!!fbAuthToken);
 
       // Connect
       if (typeof fbSetStatus === 'function') fbSetStatus('connecting', '⏳ Connecting…');
