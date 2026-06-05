@@ -1115,7 +1115,20 @@
   }</style>
 
 <div id="app">
-  <div class="app-header">
+  <div class="app-header" style="position:relative;">
+    <!-- Logout button — top-right inside header -->
+    <button id="header-logout-btn" onclick="fbEmailLogout()"
+      style="display:flex;position:absolute;top:8px;right:10px;z-index:10;
+             align-items:center;gap:4px;
+             padding:4px 11px;
+             background:#fce8e8;color:#b91c1c;
+             border:1.5px solid #f5a5a5;border-radius:20px;
+             font-size:12px;font-weight:700;
+             cursor:pointer;font-family:inherit;
+             box-shadow:0 1px 6px rgba(185,28,28,0.15);
+             white-space:nowrap;">
+      🚪 Logout
+    </button>
     <div style="display:flex;align-items:center;gap:12px;">
       <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="48" height="48" style="flex-shrink:0;">
         <ellipse cx="60" cy="108" rx="38" ry="6" fill="rgba(0,0,0,0.08)"/>
@@ -4333,6 +4346,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 <\/script>
+
 </body>
     </html>
   `);
@@ -6040,6 +6054,15 @@ function fbEmailLogout() {
   fbUpdateAuthUI(false);
   const b3 = document.getElementById('fb-pass-saved-badge'); if (b3) b3.style.display = 'none';
   showToast('🚪 Logout સફળ');
+
+  // PIN હોય તો PIN lock screen બતાવો, નહિ તો page reload કરો
+  setTimeout(function() {
+    if (secIsPinSet()) {
+      showPinLock();
+    } else {
+      window.location.reload();
+    }
+  }, 800);
 }
 
 function fbSetAuthStatus(msg) {
@@ -6054,15 +6077,18 @@ function fbUpdateAuthUI(loggedIn) {
   const loginBtn    = document.getElementById('fb-btn-email-login');
   const registerBtn = document.getElementById('fb-btn-email-register');
   const logoutBtn   = document.getElementById('fb-btn-email-logout');
+  const headerLogoutBtn = document.getElementById('header-logout-btn');
   if (!loginBtn) return;
   if (loggedIn) {
     loginBtn.style.display    = 'none';
     registerBtn.style.display = 'none';
     logoutBtn.style.display   = '';
+    if (headerLogoutBtn) headerLogoutBtn.style.display = '';
   } else {
     loginBtn.style.display    = '';
     registerBtn.style.display = '';
     logoutBtn.style.display   = 'none';
+    if (headerLogoutBtn) headerLogoutBtn.style.display = 'none';
   }
 }
 
@@ -12314,4 +12340,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
 </body>
