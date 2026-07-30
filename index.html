@@ -3302,7 +3302,31 @@ function saveActiveAccountData(custs, ents, opts) {
   opts = opts || {};
   var k    = getActiveStorageKeys();
   var cStr = JSON.stringify(custs);
-  var eStr = JSON.stringify(ents);
+  // BUG FIX: some callers (e.g. fbPull's post-merge save) pass `entries` straight
+  // from memory, which can still carry full base64 attachment.dataUrl blobs. Only
+  // save() used to strip these before writing to localStorage; every other call
+  // site (fbPull, restore, account-switch merges, etc.) wrote the raw unstripped
+  // object, which could blow past the ~5-10MB localStorage quota. When that
+  // happened, the write threw QuotaExceededError, was swallowed silently by the
+  // try/catch below, and the just-computed (correct) merged data was NEVER
+  // persisted — so the next sync cycle found the same "mismatch" again and
+  // repeated forever. Stripping HERE, once, centrally, protects every caller.
+  var entsForStorage = {};
+  for (var _cid in ents) {
+    entsForStorage[_cid] = (ents[_cid] || []).map(function(e) {
+      if (e && e.attachment && e.attachment.dataUrl) {
+        var meta = {};
+        for (var kk in e.attachment) { if (kk !== 'dataUrl') meta[kk] = e.attachment[kk]; }
+        meta.hasLocalData = true;
+        var copy = {};
+        for (var ek in e) { copy[ek] = e[ek]; }
+        copy.attachment = meta;
+        return copy;
+      }
+      return e;
+    });
+  }
+  var eStr = JSON.stringify(entsForStorage);
   _balanceCacheVersion++; // invalidate cached per-customer balances — data actually changed
   try {
     // Always write to namespaced keys
@@ -3324,6 +3348,23 @@ function saveActiveAccountData(custs, ents, opts) {
     }
   } catch(ex) {
     console.warn('[STORAGE_ISOLATION] saveActiveAccountData failed:', ex);
+    // FIX: don't let a quota failure silently vanish the just-merged data.
+    // Retry once WITHOUT the (duplicate-sized) backup mirror — that alone is
+    // often enough to fit under quota, since it halves the bytes written.
+    if (ex && ex.name === 'QuotaExceededError') {
+      try {
+        localStorage.setItem(k.custKey, cStr);
+        localStorage.setItem(k.entKey,  eStr);
+        console.warn('[STORAGE_ISOLATION] Retry without backup mirror succeeded.');
+      } catch(ex2) {
+        // Still over quota even without backup — this is no longer safe to
+        // hide from the user, since it means their data is NOT being saved.
+        console.error('[STORAGE_ISOLATION] Save still failing after backup-skip retry:', ex2);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Storage full — latest data NOT saved. Please free up space / clear old attachments.');
+        }
+      }
+    }
   }
   // Fire-and-forget mirror to IndexedDB — large-capacity safety net in case
   // localStorage ever hits its quota at scale. Never blocks or slows this function.
@@ -5903,7 +5944,7 @@ function buildSummaryData() {
   });
 }
 
-function buildSummaryHTML() {
+function buildSummaryHTML(_preserveSearch) {
   const rows = buildSummaryData();
   // Always derive totals from calcTotals() — never from cached/inline sums
   const _ct   = calcTotals();
@@ -5975,6 +6016,7 @@ function buildSummaryHTML() {
       <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;">🔍</span>
       <input type="text" id="summary-search-input" placeholder="${t('searchSummaryPlaceholder')}"
         oninput="filterSummaryTable(this.value)"
+        value="${_preserveSearch ? String(_preserveSearch).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;') : ''}"
         style="width:100%;padding:9px 12px 9px 38px;border:1.5px solid var(--border);border-radius:9px;background:#fff;font-size:13px;color:var(--ink);font-family:inherit;">
     </div>
   </div>
@@ -5986,7 +6028,7 @@ function buildSummaryHTML() {
     <div style="font-size:10px;font-weight:800;color:var(--gold);text-transform:uppercase;text-align:right;">${t('colBalanceLabel')}</div>
   </div>
   <!-- Rows -->
-  <div id="summary-table-body" style="overflow-y:auto;">${buildTableRows('')}</div>
+  <div id="summary-table-body" style="overflow-y:auto;">${buildTableRows(_preserveSearch || '')}</div>
   <!-- Footer total -->
   <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(60px,auto) minmax(60px,auto) minmax(70px,auto);gap:2px;padding:8px 8px;background:#faf0d0;border-top:2px solid var(--line);">
     <div style="font-size:11px;font-weight:800;color:var(--gold);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t('totalLabel')}</div>
@@ -6025,6 +6067,30 @@ function filterSummaryTable(val) {
       <div style="font-size:11px;font-weight:700;color:${balColor};background:${balBg};text-align:right;padding:2px 4px;border-radius:5px;white-space:nowrap;">${balText}</div>
     </div>`;
   }).join('');
+}
+
+/* Rebuild #summary-content from scratch (e.g. after a background data
+   recalculation / fbPull / language switch) WITHOUT losing whatever the
+   user has currently typed into the summary search box, and without
+   yanking focus/cursor away from them mid-typing. */
+function _rebuildSummaryKeepingSearch() {
+  const sc = document.getElementById('summary-content');
+  if (!sc) return;
+  const inputBefore = document.getElementById('summary-search-input');
+  const hadFocus     = !!(inputBefore && document.activeElement === inputBefore);
+  const searchVal    = inputBefore ? inputBefore.value : '';
+  const selStart     = inputBefore ? inputBefore.selectionStart : null;
+  const selEnd       = inputBefore ? inputBefore.selectionEnd   : null;
+
+  sc.innerHTML = buildSummaryHTML(searchVal);
+
+  if (searchVal && hadFocus) {
+    const inputAfter = document.getElementById('summary-search-input');
+    if (inputAfter) {
+      inputAfter.focus();
+      try { inputAfter.setSelectionRange(selStart, selEnd); } catch(e) {}
+    }
+  }
 }
 
 function buildSummaryMsg() {
@@ -6706,8 +6772,8 @@ function refreshOutstandingReport() {
   if (tab === 'summary') {
     const sc = document.getElementById('summary-content');
     if (sc && sc.style.display !== 'none') {
-      sc.innerHTML = buildSummaryHTML();
-      console.log('[REPORT_TOTALS] Displayed totals — summary tab re-rendered');
+      _rebuildSummaryKeepingSearch();
+      console.log('[REPORT_TOTALS] Displayed totals — summary tab re-rendered (search preserved)');
     }
   } else if (tab === 'allkhata') {
     const akc = document.getElementById('allkhata-content');
@@ -7663,7 +7729,7 @@ function applyLanguage() {
     var tab = typeof _activeSummaryTab !== 'undefined' ? _activeSummaryTab : 'summary';
     if (tab === 'summary') {
       var sc = document.getElementById('summary-content');
-      if (sc && sc.style.display !== 'none') sc.innerHTML = buildSummaryHTML();
+      if (sc && sc.style.display !== 'none') _rebuildSummaryKeepingSearch();
     } else if (tab === 'datewise') {
       var dc = document.getElementById('datewise-content');
       if (dc && dc.style.display !== 'none') dc.innerHTML = buildDatewiseHTML();
@@ -17691,7 +17757,7 @@ function acctSwitchTo(id) {
 
   // Refresh allkhata / summary if open
   const sc = document.getElementById('summary-content');
-  if (sc && sc.style.display !== 'none') sc.innerHTML = buildSummaryHTML();
+  if (sc && sc.style.display !== 'none') _rebuildSummaryKeepingSearch();
 
   acctRenderTabs();
   acctUpdateHeaderBtn();
