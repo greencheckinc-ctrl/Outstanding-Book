@@ -359,6 +359,62 @@
 
   /* ── APP SHELL ── */
   #app { padding: 14px 16px; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); max-width: 920px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+
+  /* ── DESKTOP / LAPTOP FULL-WIDTH VIEW ──
+     On laptops and desktops the 920px cap above left large blank margins on
+     both sides. This rule only applies at >=1000px viewport width, so phones
+     and tablets are completely unaffected — mobile layout stays exactly as it
+     was. ── */
+  @media (min-width: 1000px) {
+    #app { max-width: 100%; padding: 18px 28px; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
+
+    /* Header: title row + date/time on the right, buttons row below.
+       !important is required here: a later, unconditional (non-media)
+       .app-header rule sets flex-direction:column/align-items:stretch —
+       same specificity + later in source = it was silently winning and
+       cancelling this override, which is why nothing visually changed
+       despite this rule existing. */
+    .app-header { flex-direction: row !important; flex-wrap: wrap !important; justify-content: space-between !important; align-items: flex-start !important; }
+    .app-header > div:first-child { flex: 1 1 auto; align-items: flex-start !important; }
+    #app-header-datetime { display: flex !important; order: 2; }
+    .header-actions { flex: 1 0 100%; order: 3; }
+
+    /* Report modal had an inline max-width:700px cap, so it stayed a narrow
+       column on big screens. !important is needed to beat the inline style. */
+    #summary-modal .modal-box {
+      max-width: 96vw !important;
+      width: 96vw !important;
+      max-height: 94vh;
+      height: 94vh;
+      /* The box itself must NOT scroll — otherwise the sticky footer scrolls
+         out of view and the WhatsApp/SMS/Print/Close buttons get cut off. */
+      overflow: hidden !important;
+    }
+    /* Only the body scrolls. min-height:0 is required or a flex child refuses
+       to shrink below its content size and pushes the footer off-screen. */
+    #summary-modal .modal-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding-bottom: 12px !important;
+    }
+    /* Footer always pinned and fully visible at the bottom of the box. */
+    #summary-modal .modal-foot {
+      flex: 0 0 auto;
+      position: static !important;
+      padding: 10px 14px;
+      gap: 8px;
+    }
+    /* WhatsApp/SMS/Print buttons default to a short 26px height while the
+       Close (બંધ) button is taller (padding-based) — match them all to the
+       Close button's height so the row looks uniform. */
+    #summary-modal .modal-foot .btn-share,
+    #summary-modal .modal-foot .btn-new {
+      height: 40px !important;
+      min-height: 40px !important;
+      max-height: 40px !important;
+    }
+  }
   .app-header {
     display: flex; flex-direction: column; align-items: stretch;
     margin-bottom: 16px; gap: 10px;
@@ -1048,19 +1104,25 @@
   #acct-modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 999;
     background: rgba(0,0,0,0.6); align-items: center; justify-content: center; padding: 16px;
+    overflow-y: auto; /* FIX: overlay can scroll if content is taller than the screen */
   }
   #acct-modal-overlay.open { display: flex; }
   #acct-modal-box {
     background: var(--page); border-radius: 14px; max-width: 400px; width: 100%;
     box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    /* FIX: previously had no height limit at all, so long content (accounts
+       list + new-account form + hint text) simply got clipped by the
+       viewport with no way to scroll to it. Now it scrolls internally. */
+    max-height: calc(100vh - 32px); display: flex; flex-direction: column; overflow: hidden;
   }
   #acct-modal-head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 18px; background: var(--gold);
     border-radius: 14px 14px 0 0;
+    flex: 0 0 auto; /* FIX: header stays put, doesn't get squeezed by scrolling body */
   }
   #acct-modal-head h3 { font-size: 15px; font-weight: 800; color: var(--gold-light); }
-  #acct-modal-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  #acct-modal-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
   .acct-list-item {
     display: flex; align-items: center; gap: 8px; padding: 10px 12px;
     border: 1.5px solid var(--border); border-radius: 9px; background: var(--page);
@@ -1499,6 +1561,11 @@
         <div class="app-title" data-t="appTitle">Outstanding Record Book</div>
         <div class="app-sub"><span data-t="appSub">વ્યવહાર નોંધ / Transaction Ledger</span><br>Developed by <span style="color:#16a34a;font-weight:700;">GreenCheck</span><span style="color:rgba(0,0,0,0.7);font-weight:700;"> Inc.</span></div>
       </div>
+    </div>
+    <!-- Desktop-only live date/time (hidden on mobile — shown via @media min-width:1000px below) -->
+    <div id="app-header-datetime" style="display:none;flex-direction:column;align-items:flex-end;text-align:right;flex-shrink:0;">
+      <div id="app-header-date" style="font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;"></div>
+      <div id="app-header-time" style="font-size:20px;font-weight:800;color:var(--ink);letter-spacing:0.5px;white-space:nowrap;font-variant-numeric:tabular-nums;"></div>
     </div>
     <div class="header-actions">
       <!-- Account Switcher Dropdown -->
@@ -8053,6 +8120,9 @@ function applyLanguage() {
     el.textContent = t(key);
   });
 
+  // Refresh desktop header date/time immediately in the new language
+  if (typeof updateAppHeaderDateTime === 'function') updateAppHeaderDateTime();
+
   // Update dynamic elements
   const si = document.getElementById('search-input');
   if (si) si.placeholder = t('searchPlaceholder');
@@ -8258,6 +8328,25 @@ function setLanguage(lang) {
   localStorage.setItem('ug_lang', lang);
   applyLanguage();
 }
+
+/* ── DESKTOP HEADER: live date + time (top-right, desktop only) ──
+   Follows currentLang so it flips between Gujarati and English exactly
+   like every other piece of translated UI in the app. Hidden entirely on
+   mobile via CSS (#app-header-datetime is display:none by default and
+   only switched to display:flex above 1000px viewport width). ── */
+function updateAppHeaderDateTime() {
+  const dateEl = document.getElementById('app-header-date');
+  const timeEl = document.getElementById('app-header-time');
+  if (!dateEl || !timeEl) return; // not on screen (mobile) — skip cheaply
+
+  const now = new Date();
+  const locale = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'en-IN' : 'gu-IN';
+
+  dateEl.textContent = now.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  timeEl.textContent = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+}
+updateAppHeaderDateTime();
+setInterval(updateAppHeaderDateTime, 1000);
 
 // Resolve previously-saved email/password without needing them visible in the UI.
 // Same priority order fbAutoLogin() already uses: custom account → per-account → global.
@@ -10655,6 +10744,155 @@ async function fbRefreshAuthToken(refreshToken, apiKey) {
   } catch(e) { return null; }
 }
 
+/* ── CENTRAL LOGIN GATEKEEPER (fixes "QUOTA_EXCEEDED : verifying passwords") ──
+   Every place in the app that needed a fresh auth token used to call the
+   password-based signInWithPassword endpoint directly. That endpoint has a
+   tight, PROJECT-WIDE quota (shared across every device using this Firebase
+   project) — repeated calls across devices/reconnect-retries burned through
+   it fast. This function is now the ONLY place that ever calls
+   signInWithPassword. It always tries, in order:
+     1) a cached still-valid idToken (no network call at all)
+     2) a silent refresh via refreshToken (different endpoint, much higher
+        quota — doesn't touch the password-verification limit)
+     3) only as a last resort, a full email+password login
+   It also de-dupes concurrent callers (only one network request in flight
+   at a time) and applies a cool-down after repeated failures so a bad
+   network/config can't spiral into dozens of password-verify calls. ──*/
+let _fbAuthInFlight     = null;
+let _fbAuthFailCount    = 0;
+let _fbAuthCoolDownUntil = 0;
+
+function fbAuthCoolDownRemainingMs() {
+  return Math.max(0, _fbAuthCoolDownUntil - Date.now());
+}
+
+// Resolves to { idToken, uid, email, isCustomAcct } or throws.
+// Pass forceFullLogin=true only for an explicit user-initiated Login button click.
+async function fbAuthEnsureToken(forceFullLogin) {
+  if (_fbAuthInFlight) return _fbAuthInFlight; // de-dupe concurrent callers
+
+  if (!forceFullLogin && Date.now() < _fbAuthCoolDownUntil) {
+    const secsLeft = Math.ceil(fbAuthCoolDownRemainingMs() / 1000);
+    const _isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
+    throw new Error(_isEn
+      ? `Too many login attempts — please wait ~${secsLeft}s and try Reconnect manually.`
+      : `ઘણા બધા login attempts થયા — લગભગ ${secsLeft} સેકન્ડ રાહ જોઈ “Reconnect” દબાવો.`);
+  }
+
+  _fbAuthInFlight = (async () => {
+    try {
+      let isCustomAcct = false, customAcct = null, acctListL = null, acctIdx = -1;
+      let email = '', password = '', apiKey = '';
+
+      try {
+        const activeId = acctGetActiveId();
+        acctListL = acctLoadList();
+        acctIdx   = acctListL.findIndex(a => a.id === activeId);
+        const acct = acctIdx >= 0 ? acctListL[acctIdx] : null;
+        if (acct && acct.fbMode === 'custom' && acct.fbCustomConfig && acct.fbCustomConfig.apiKey) {
+          isCustomAcct = true;
+          customAcct   = acct;
+          email        = acct.fbCustomConfig.email    || '';
+          password     = acct.fbCustomConfig.password || '';
+          apiKey       = acct.fbCustomConfig.apiKey;
+        }
+      } catch(e) {}
+
+      if (!isCustomAcct) {
+        fbLoadConfig();
+        email    = localStorage.getItem('ug_fb_auth_email')    || '';
+        password = localStorage.getItem('ug_fb_auth_password') || '';
+        apiKey   = fbConfig && fbConfig.apiKey;
+      }
+
+      if (!email || !password || !apiKey) {
+        throw new Error('Email/Password/API Key missing');
+      }
+
+      const now = Date.now();
+
+      // ── STEP 1 + 2: cached token, then silent refresh ──
+      if (isCustomAcct) {
+        if (!forceFullLogin && customAcct.customToken && customAcct.customTokenExpiresAt && customAcct.customTokenExpiresAt > now + 60000) {
+          _fbAuthFailCount = 0;
+          return { idToken: customAcct.customToken, uid: customAcct.customUid, email, isCustomAcct };
+        }
+        if (!forceFullLogin && customAcct.customRefreshToken) {
+          const r = await fbRefreshAuthToken(customAcct.customRefreshToken, apiKey);
+          if (r) {
+            customAcct.customToken          = r.idToken;
+            customAcct.customRefreshToken   = r.refreshToken || customAcct.customRefreshToken;
+            customAcct.customTokenExpiresAt = Date.now() + (parseInt(r.expiresIn || '3600', 10) * 1000);
+            if (acctIdx >= 0) { acctListL[acctIdx] = customAcct; acctSaveList(acctListL); }
+            _fbAuthFailCount = 0;
+            return { idToken: r.idToken, uid: customAcct.customUid, email, isCustomAcct };
+          }
+          // refresh token invalid/expired — fall through to full login
+        }
+      } else {
+        const cached = fbLoadAuthToken();
+        if (!forceFullLogin && cached && cached.idToken && cached.email === email && cached.expiresAt > now + 60000) {
+          _fbAuthFailCount = 0;
+          return { idToken: cached.idToken, uid: null, email: cached.email, isCustomAcct };
+        }
+        if (!forceFullLogin && cached && cached.refreshToken && cached.email === email) {
+          const r = await fbRefreshAuthToken(cached.refreshToken, apiKey);
+          if (r) {
+            fbSaveAuthToken(r.idToken, email, r.expiresIn, r.refreshToken);
+            _fbAuthFailCount = 0;
+            return { idToken: r.idToken, uid: null, email, isCustomAcct };
+          }
+        }
+      }
+
+      // ── STEP 3: full email+password login (last resort only) ──
+      const res = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, returnSecureToken: true }) }
+      );
+      const data = await res.json();
+      if (data.error) {
+        _fbAuthFailCount++;
+        if (_fbAuthFailCount >= 3) {
+          _fbAuthCoolDownUntil = Date.now() + 5 * 60000; // 5 min cool-down after 3 straight failures
+        }
+        throw new Error(typeof fbAuthErrMsg === 'function' ? fbAuthErrMsg(data.error.message) : data.error.message);
+      }
+      _fbAuthFailCount = 0;
+
+      let uid = data.localId || null;
+      if (!uid) {
+        try {
+          const payload = data.idToken.split('.')[1];
+          const padded  = payload + '='.repeat((4 - payload.length % 4) % 4);
+          uid = JSON.parse(atob(padded.replace(/-/g, '+').replace(/_/g, '/'))).user_id || null;
+        } catch(e) {}
+      }
+
+      if (isCustomAcct) {
+        customAcct.customToken          = data.idToken;
+        customAcct.customUid            = uid;
+        customAcct.customRefreshToken   = data.refreshToken || null;
+        customAcct.customTokenExpiresAt = Date.now() + (parseInt(data.expiresIn || '3600', 10) * 1000);
+        if (acctIdx >= 0) { acctListL[acctIdx] = customAcct; acctSaveList(acctListL); }
+      } else {
+        fbSaveAuthToken(data.idToken, data.email, data.expiresIn, data.refreshToken);
+        try {
+          localStorage.setItem('ug_fb_uid', uid);
+          localStorage.setItem('ug_fb_uid_' + acctGetActiveId(), uid);
+        } catch(e) {}
+      }
+
+      return { idToken: data.idToken, uid, email: data.email || email, isCustomAcct };
+    } finally {
+      _fbAuthInFlight = null;
+    }
+  })();
+
+  return _fbAuthInFlight;
+}
+
 function fbAuthApiUrl(endpoint) {
   if (!fbConfig) return null;
   return `https://identitytoolkit.googleapis.com/v1/accounts:${endpoint}?key=${fbConfig.apiKey}`;
@@ -10696,14 +10934,18 @@ async function fbEmailRegister() {
     if (data.error) throw new Error(fbAuthErrMsg(data.error.message));
 
     if (isCustom && customAcct) {
-      customAcct.customToken = data.idToken;
-      customAcct.customUid   = data.localId || null;
+      customAcct.customToken          = data.idToken;
+      customAcct.customUid            = data.localId || null;
+      customAcct.customRefreshToken   = data.refreshToken || null;
+      customAcct.customTokenExpiresAt = Date.now() + (parseInt(data.expiresIn || '3600', 10) * 1000);
       customAcct.fbCustomConfig = Object.assign({}, customAcct.fbCustomConfig, { email, password });
       const list = acctLoadList();
       const idx = list.findIndex(a => a.id === customAcct.id);
       if (idx >= 0) {
-        list[idx].customToken = customAcct.customToken;
-        list[idx].customUid   = customAcct.customUid;
+        list[idx].customToken          = customAcct.customToken;
+        list[idx].customUid            = customAcct.customUid;
+        list[idx].customRefreshToken   = customAcct.customRefreshToken;
+        list[idx].customTokenExpiresAt = customAcct.customTokenExpiresAt;
         list[idx].fbCustomConfig = customAcct.fbCustomConfig;
         acctSaveList(list);
       }
@@ -10768,14 +11010,20 @@ async function fbEmailLogin() {
 
     if (isCustom && customAcct) {
       // Custom account: token + email/pass એ account માં save કરો
-      customAcct.customToken = data.idToken;
-      customAcct.customUid   = data.localId || null;
+      // (+ refreshToken/expiry so later auto-reconnects can refresh silently
+      //  instead of calling signInWithPassword again — see fbAuthEnsureToken)
+      customAcct.customToken          = data.idToken;
+      customAcct.customUid            = data.localId || null;
+      customAcct.customRefreshToken   = data.refreshToken || null;
+      customAcct.customTokenExpiresAt = Date.now() + (parseInt(data.expiresIn || '3600', 10) * 1000);
       customAcct.fbCustomConfig = Object.assign({}, customAcct.fbCustomConfig, { email, password });
       const list = acctLoadList();
       const idx = list.findIndex(a => a.id === customAcct.id);
       if (idx >= 0) {
-        list[idx].customToken = customAcct.customToken;
-        list[idx].customUid   = customAcct.customUid;
+        list[idx].customToken          = customAcct.customToken;
+        list[idx].customUid            = customAcct.customUid;
+        list[idx].customRefreshToken   = customAcct.customRefreshToken;
+        list[idx].customTokenExpiresAt = customAcct.customTokenExpiresAt;
         list[idx].fbCustomConfig = customAcct.fbCustomConfig;
         acctSaveList(list);
       }
@@ -11648,57 +11896,37 @@ async function fbConnect() {
   // For custom account: use its saved email/password for auth
   const authEmail    = isCustomAcct ? (customAcct.fbCustomConfig.email    || '') : (localStorage.getItem('ug_fb_auth_email')    || '');
   const authPassword = isCustomAcct ? (customAcct.fbCustomConfig.password || '') : (localStorage.getItem('ug_fb_auth_password') || '');
-  const existingToken = isCustomAcct ? (customAcct.customToken || null) : fbAuthToken;
 
   // ── Ensure valid auth token before connecting ──
-  if (!existingToken) {
-    if (authEmail && authPassword) {
-      try {
-        fbSetStatus('connecting', '⏳ Auth token મેળવાઈ રહ્યો છે…');
-        const authRes = await fetch(
-          `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${effectiveCfg.apiKey}`,
-          { method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ email: authEmail, password: authPassword, returnSecureToken:true }) }
-        );
-        const authData = await authRes.json();
-        if (authData.error) throw new Error(fbAuthErrMsg(authData.error.message));
-        if (isCustomAcct) {
-          // Store token + UID in the custom account object
-          customAcct.customToken = authData.idToken;
-          customAcct.customUid   = authData.localId || null;
-          const list = acctLoadList();
-          const idx  = list.findIndex(a => a.id === customAcct.id);
-          if (idx >= 0) { list[idx].customToken = customAcct.customToken; list[idx].customUid = customAcct.customUid; acctSaveList(list); }
-        } else {
-          fbAuthToken = authData.idToken;
-          fbAuthUser  = authData.email;
-          if (typeof fbSaveAuthToken === 'function') {
-            fbSaveAuthToken(authData.idToken, authData.email, authData.expiresIn, authData.refreshToken);
-          }
-          // UID localStorage માં save — fbGetUID() ની backup
+  // (routed through fbAuthEnsureToken: cached token → silent refresh →
+  //  full login only as last resort — see def near fbRefreshAuthToken)
+  if (authEmail && authPassword) {
+    try {
+      fbSetStatus('connecting', '⏳ Auth token મેળવાઈ રહ્યો છે…');
+      const authResult = await fbAuthEnsureToken(false);
+      if (isCustomAcct) {
+        customAcct.customToken = authResult.idToken;
+        customAcct.customUid   = authResult.uid || customAcct.customUid;
+      } else {
+        fbAuthToken = authResult.idToken;
+        fbAuthUser  = authResult.email;
+        if (authResult.uid) {
           try {
-            const payload = authData.idToken.split('.')[1];
-            const padded  = payload + '='.repeat((4 - payload.length % 4) % 4);
-            const decoded = JSON.parse(atob(padded.replace(/-/g, '+').replace(/_/g, '/')));
-            const uid = decoded.user_id || decoded.sub || null;
-            if (uid) {
-              localStorage.setItem('ug_fb_uid', uid);
-              // Per-account cache — survives account switch
-              localStorage.setItem('ug_fb_uid_' + acctGetActiveId(), uid);
-            }
+            localStorage.setItem('ug_fb_uid', authResult.uid);
+            localStorage.setItem('ug_fb_uid_' + acctGetActiveId(), authResult.uid);
           } catch(e) {}
-          fbUpdateAuthUI(true);
         }
-      } catch(authErr) {
-        fbSetStatus('error', '❌ Auth failed: ' + authErr.message);
-        showToast(t('toastLoginFailed').replace('{msg}', authErr.message), 4000);
-        return;
+        fbUpdateAuthUI(true);
       }
-    } else {
-      fbSetStatus('error', '❌ Login કરો — Email/Password નથી');
-      showToast(t('toastFbSettingsFill'), 4000);
+    } catch(authErr) {
+      fbSetStatus('error', '❌ Auth failed: ' + authErr.message);
+      showToast(t('toastLoginFailed').replace('{msg}', authErr.message), 4000);
       return;
     }
+  } else {
+    fbSetStatus('error', '❌ Login કરો — Email/Password નથી');
+    showToast(t('toastFbSettingsFill'), 4000);
+    return;
   }
 
 
@@ -11789,52 +12017,27 @@ async function fbConnect() {
           }
         } catch(logoutErr) {}
 
-        // Step 2: Re-login with saved email+password
+        // Step 2: Re-login — routed through fbAuthEnsureToken (tries cached
+        // refreshToken silently first; only falls back to full email+password
+        // login if the refresh token itself is invalid/expired)
         setTimeout(async function() {
           try {
             fbSetStatus('connecting', _gu2 ? '⏳ ફરી લૉગિન થઈ રહ્યા છે…' : 'Re-login…');
-            const reAuthRes = await fetch(
-              `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${effectiveCfg.apiKey}`,
-              { method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: reEmail, password: rePassword, returnSecureToken: true }) }
-            );
-            const reAuthData = await reAuthRes.json();
-            if (reAuthData.error) throw new Error(fbAuthErrMsg(reAuthData.error.message));
+            const reAuthResult = await fbAuthEnsureToken(false);
 
             // Step 3: Save new token
             if (isCustomAcct && customAcct) {
-              customAcct.customToken = reAuthData.idToken;
-              customAcct.customUid   = reAuthData.localId || null;
-              const _list = acctLoadList();
-              const _idx  = _list.findIndex(a => a.id === customAcct.id);
-              if (_idx >= 0) {
-                _list[_idx].customToken = customAcct.customToken;
-                _list[_idx].customUid   = customAcct.customUid;
-                // email+password પણ save (જો ન હોય તો)
-                if (!_list[_idx].fbCustomConfig) _list[_idx].fbCustomConfig = {};
-                _list[_idx].fbCustomConfig.email    = reEmail;
-                _list[_idx].fbCustomConfig.password = rePassword;
-                acctSaveList(_list);
-              }
+              customAcct.customToken = reAuthResult.idToken;
+              customAcct.customUid   = reAuthResult.uid || customAcct.customUid;
             } else {
-              fbAuthToken = reAuthData.idToken;
-              fbAuthUser  = reAuthData.email;
-              // email+password localStorage માં save
-              localStorage.setItem('ug_fb_auth_email',    reEmail);
-              localStorage.setItem('ug_fb_auth_password', rePassword);
-              if (typeof fbSaveAuthToken === 'function') {
-                fbSaveAuthToken(reAuthData.idToken, reAuthData.email, reAuthData.expiresIn, reAuthData.refreshToken);
+              fbAuthToken = reAuthResult.idToken;
+              fbAuthUser  = reAuthResult.email;
+              if (reAuthResult.uid) {
+                try {
+                  localStorage.setItem('ug_fb_uid', reAuthResult.uid);
+                  localStorage.setItem('ug_fb_uid_' + acctGetActiveId(), reAuthResult.uid);
+                } catch(e) {}
               }
-              try {
-                const _payload = reAuthData.idToken.split('.')[1];
-                const _padded  = _payload + '='.repeat((4 - _payload.length % 4) % 4);
-                const _decoded = JSON.parse(atob(_padded.replace(/-/g, '+').replace(/_/g, '/')));
-                const _uid = _decoded.user_id || _decoded.sub || null;
-                if (_uid) {
-                  localStorage.setItem('ug_fb_uid', _uid);
-                  localStorage.setItem('ug_fb_uid_' + acctGetActiveId(), _uid);
-                }
-              } catch(e) {}
               fbUpdateAuthUI(true);
             }
 
@@ -11900,32 +12103,11 @@ async function fbAutoRelogin(triggeredBy) {
     fbSetStatus('connecting', _isEn ? '🔄 Auto re-login…' : '🔄 ફરી લૉગિન થઈ રહ્યા છે…');
     showToast(t('toastSessionExpired'), 3000);
 
-    // Step 1: Clear old token
-    const effectiveCfg = (typeof fbCustomConfig !== 'undefined' && fbCustomConfig) || fbConfig || {};
-    try {
-      if (isCustomAcct) {
-        const _list = acctLoadList();
-        const _active = acctGetActiveId();
-        const _acct = _list.find(a => a.id === _active);
-        if (_acct) {
-          _acct.customToken = null; _acct.customUid = null;
-          const _idx = _list.findIndex(a => a.id === _active);
-          if (_idx >= 0) { _list[_idx].customToken = null; _list[_idx].customUid = null; acctSaveList(_list); }
-        }
-      } else {
-        fbAuthToken = null; fbAuthUser = null;
-        try { fbUpdateAuthUI(false); } catch(e) {}
-      }
-    } catch(e) {}
-
-    // Step 2: Re-login
-    const reAuthRes = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${effectiveCfg.apiKey}`,
-      { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: reEmail, password: rePassword, returnSecureToken: true }) }
-    );
-    const reAuthData = await reAuthRes.json();
-    if (reAuthData.error) throw new Error(reAuthData.error.message);
+    // Step 1 + 2: Re-login — routed through fbAuthEnsureToken, which tries
+    // a cached refreshToken silently before ever touching signInWithPassword.
+    // (We deliberately do NOT clear the existing token/refreshToken here —
+    // fbAuthEnsureToken needs them to attempt the silent refresh first.)
+    const reAuthResult = await fbAuthEnsureToken(false);
 
     // Step 3: Save new token
     if (isCustomAcct) {
@@ -11933,33 +12115,17 @@ async function fbAutoRelogin(triggeredBy) {
         const _list = acctLoadList();
         const _active = acctGetActiveId();
         const _idx = _list.findIndex(a => a.id === _active);
-        if (_idx >= 0) {
-          _list[_idx].customToken = reAuthData.idToken;
-          _list[_idx].customUid   = reAuthData.localId || null;
-          if (!_list[_idx].fbCustomConfig) _list[_idx].fbCustomConfig = {};
-          _list[_idx].fbCustomConfig.email    = reEmail;
-          _list[_idx].fbCustomConfig.password = rePassword;
-          acctSaveList(_list);
-          if (typeof customAcct !== 'undefined' && customAcct) {
-            customAcct.customToken = reAuthData.idToken;
-            customAcct.customUid   = reAuthData.localId || null;
-          }
+        if (_idx >= 0 && typeof customAcct !== 'undefined' && customAcct) {
+          customAcct.customToken = reAuthResult.idToken;
+          customAcct.customUid   = reAuthResult.uid || customAcct.customUid;
         }
       } catch(e) {}
     } else {
-      fbAuthToken = reAuthData.idToken;
-      fbAuthUser  = reAuthData.email;
-      localStorage.setItem('ug_fb_auth_email',    reEmail);
-      localStorage.setItem('ug_fb_auth_password', rePassword);
-      if (typeof fbSaveAuthToken === 'function') {
-        fbSaveAuthToken(reAuthData.idToken, reAuthData.email, reAuthData.expiresIn, reAuthData.refreshToken);
+      fbAuthToken = reAuthResult.idToken;
+      fbAuthUser  = reAuthResult.email;
+      if (reAuthResult.uid) {
+        try { localStorage.setItem('ug_fb_uid', reAuthResult.uid); } catch(e) {}
       }
-      try {
-        const _p = reAuthData.idToken.split('.')[1];
-        const _d = JSON.parse(atob((_p + '='.repeat((4 - _p.length % 4) % 4)).replace(/-/g,'+').replace(/_/g,'/')));
-        const _uid = _d.user_id || _d.sub || null;
-        if (_uid) { localStorage.setItem('ug_fb_uid', _uid); }
-      } catch(e) {}
       try { fbUpdateAuthUI(true); } catch(e) {}
     }
 
@@ -12010,9 +12176,14 @@ function fbAutoReloginThrottled(triggeredBy) {
     }
     return;
   }
-  // Throttle real relogin attempts to at most once every 20s
+  // Throttle real relogin attempts to at most once every 60s
+  // (was 20s — that alone could fire ~180 auth attempts/hour under a bad
+  // network/config, quickly burning the shared per-project password-verify
+  // quota. fbAuthEnsureToken itself also avoids most of these calls anyway
+  // via cached-token/refresh-token reuse, but this cap protects against the
+  // remaining full-login fallback path.)
   const now = Date.now();
-  if (now - _fbLastReloginAttempt < 20000) return;
+  if (now - _fbLastReloginAttempt < 60000) return;
   _fbLastReloginAttempt = now;
   fbAutoRelogin(triggeredBy);
 }
@@ -13563,12 +13734,14 @@ async function acctLoginCustomFb(id) {
     const uid     = decoded.user_id || decoded.sub || '';
     if (!uid) throw new Error('UID decode failed');
 
-    // Persist into account object
+    // Persist into account object (+ refreshToken/expiry for silent refresh later)
     const saveList = acctLoadList();
     const saveAcct = saveList.find(a => a.id === id);
     if (saveAcct) {
-      saveAcct.customUid   = uid;
-      saveAcct.customToken = data.idToken;
+      saveAcct.customUid            = uid;
+      saveAcct.customToken          = data.idToken;
+      saveAcct.customRefreshToken   = data.refreshToken || null;
+      saveAcct.customTokenExpiresAt = Date.now() + (parseInt(data.expiresIn || '3600', 10) * 1000);
       acctSaveList(saveList);
     }
 
@@ -13622,12 +13795,14 @@ async function acctRegisterCustomFb(id) {
     const decoded = JSON.parse(atob(padded.replace(/-/g, '+').replace(/_/g, '/')));
     const uid     = decoded.user_id || decoded.sub || '';
 
-    // Persist into account object
+    // Persist into account object (+ refreshToken/expiry for silent refresh later)
     const saveList = acctLoadList();
     const saveAcct = saveList.find(a => a.id === id);
     if (saveAcct) {
-      saveAcct.customUid   = uid;
-      saveAcct.customToken = data.idToken;
+      saveAcct.customUid            = uid;
+      saveAcct.customToken          = data.idToken;
+      saveAcct.customRefreshToken   = data.refreshToken || null;
+      saveAcct.customTokenExpiresAt = Date.now() + (parseInt(data.expiresIn || '3600', 10) * 1000);
       acctSaveList(saveList);
     }
 
@@ -13690,11 +13865,14 @@ async function acctFetchUID(id) {
     if (uidEl) uidEl.textContent = uid;
 
     // ── Persist UID + idToken into account object for fbDbUrl routing ──
+    // (+ refreshToken/expiry for silent refresh later)
     const saveList = acctLoadList();
     const saveAcct = saveList.find(a => a.id === id);
     if (saveAcct) {
-      saveAcct.customUid   = uid;
-      saveAcct.customToken = data.idToken;
+      saveAcct.customUid            = uid;
+      saveAcct.customToken          = data.idToken;
+      saveAcct.customRefreshToken   = data.refreshToken || null;
+      saveAcct.customTokenExpiresAt = Date.now() + (parseInt(data.expiresIn || '3600', 10) * 1000);
       acctSaveList(saveList);
     }
 
@@ -15643,7 +15821,7 @@ function deleteKhataById(id, name) {
         const banner = document.createElement('div');
         banner.id = 'trial-banner';
         banner.style.cssText = `
-          position:fixed;bottom:0;left:0;right:0;z-index:9000;
+          position:fixed;bottom:0;left:0;right:0;z-index:150;
           background:linear-gradient(90deg,#92600a,#b47a1a);
           color:#fff;padding:7px 14px;font-size:12px;font-weight:700;
           display:flex;align-items:center;justify-content:space-between;
@@ -15791,140 +15969,50 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'teal', false);
 
   if (!email || !password || !apiKey) return;
 
-  // ── STEP 1: try the cached token first (no network call needed at all) ──
-  const cached = fbLoadAuthToken();
-  if (cached && cached.idToken && cached.email === email && cached.expiresAt > Date.now() + 60000) {
-    fbAuthToken = cached.idToken;
-    fbAuthUser  = cached.email;
-    const afEmail0 = document.getElementById('fb-auth-email');
-    const afPass0  = document.getElementById('fb-auth-password');
-    if (afEmail0) afEmail0.value = email;
-    // SECURITY: don't mirror the real password into the visible field
-    if (afPass0 && !afPass0.value) afPass0.placeholder = '•••••••• (saved)';
-    const b0 = document.getElementById('fb-pass-saved-badge'); if (b0) b0.style.display = '';
-    if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
-    try { fbSetAuthStatus('✅ Auto-login (cached): ' + cached.email); } catch(e) {}
-    localStorage.removeItem('ug_fb_user_disconnected');
-    const hasConfigCached = !!(fbConfig && fbConfig.apiKey && fbConfig.dbUrl);
-    if (hasConfigCached) {
-      if (typeof fbSetStatus === 'function') fbSetStatus('connecting', '🔄 જોડાણ થઈ રહ્યું છે…', '');
-      setTimeout(async function() {
-        try {
-          await fbConnect();
-          if (fbConnected) { _showFbConnectedPopup(); }
-          else if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1);
-        } catch(err) {
-          fbConnected = false;
-          if (typeof fbSetStatus === 'function') fbSetStatus('error', '❌ ' + err.message, '');
-          setTimeout(function(){ if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1); }, 3000);
-        }
-      }, 600);
-    }
-    return; // cached token reused — no need to hit signInWithPassword
-  }
+  // ── Delegate entirely to fbConnect(), which internally calls
+  // fbAuthEnsureToken() — this already does cache → silent refresh → full
+  // login in the right order for BOTH custom and shared accounts, reading
+  // from the correct per-account storage. (Previously this function had its
+  // own separate 3-step check here, but it always read the GLOBAL token
+  // cache — which custom accounts never populate — so custom accounts did a
+  // full signInWithPassword on every single page load, and then fbConnect()
+  // right after could trigger a SECOND full login on top of that. That
+  // double full-login-per-app-open, multiplied across devices, is what was
+  // burning through the Firebase project's password-verification quota.) ──
+  const afEmailPre = document.getElementById('fb-auth-email');
+  const afPassPre  = document.getElementById('fb-auth-password');
+  if (afEmailPre) afEmailPre.value = email;
+  if (afPassPre && !afPassPre.value) afPassPre.placeholder = '•••••••• (saved)';
+  const bPre = document.getElementById('fb-pass-saved-badge'); if (bPre) bPre.style.display = '';
 
-  // ── STEP 2: cached token missing/expired/mismatched — try silent refresh via refreshToken ──
-  if (cached && cached.refreshToken && cached.email === email) {
-    const refreshed = await fbRefreshAuthToken(cached.refreshToken, apiKey);
-    if (refreshed) {
-      fbAuthToken = refreshed.idToken;
-      fbAuthUser  = email;
-      fbSaveAuthToken(refreshed.idToken, email, refreshed.expiresIn, refreshed.refreshToken);
-      const afEmail1 = document.getElementById('fb-auth-email');
-      const afPass1  = document.getElementById('fb-auth-password');
-      if (afEmail1) afEmail1.value = email;
-      // SECURITY: don't mirror the real password into the visible field
-      if (afPass1 && !afPass1.value) afPass1.placeholder = '•••••••• (saved)';
-      const b1r = document.getElementById('fb-pass-saved-badge'); if (b1r) b1r.style.display = '';
-      if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
-      try { fbSetAuthStatus('✅ Auto-login (refreshed): ' + email); } catch(e) {}
-      localStorage.removeItem('ug_fb_user_disconnected');
-      const hasConfigR = !!(fbConfig && fbConfig.apiKey && fbConfig.dbUrl);
-      if (hasConfigR) {
-        if (typeof fbSetStatus === 'function') fbSetStatus('connecting', '🔄 જોડાણ થઈ રહ્યું છે…', '');
-        setTimeout(async function() {
-          try {
-            await fbConnect();
-            if (fbConnected) { _showFbConnectedPopup(); }
-            else if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1);
-          } catch(err) {
-            fbConnected = false;
-            if (typeof fbSetStatus === 'function') fbSetStatus('error', '❌ ' + err.message, '');
-            setTimeout(function(){ if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1); }, 3000);
-          }
-        }, 600);
-      }
-      return; // refreshed successfully — no need for full email/password login
-    }
-    // refresh failed (revoked/expired) — fall through to full signInWithPassword below
-  }
+  localStorage.removeItem('ug_fb_user_disconnected');
+  const hasConfig = !!(fbConfig && fbConfig.apiKey && fbConfig.dbUrl);
+  if (!hasConfig) return;
 
-  // ── STEP 3: no usable cached/refresh token — full email+password login (as before) ──
-  try {
-    const res = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, returnSecureToken: true })
+  try { fbSetAuthStatus(currentLang === 'en' ? '⏳ Auto-login…' : '⏳ ઓટો-લૉગિન…'); } catch(e) {}
+  if (typeof fbSetStatus === 'function') fbSetStatus('connecting', currentLang === 'en' ? '🔄 Auto-connecting…' : '🔄 ઓટો-કનેક્ટ થઈ રહ્યું છે…', '');
+
+  setTimeout(async function() {
+    try {
+      await fbConnect();
+      if (fbConnected) {
+        try { fbSetAuthStatus('✅ Auto-login: ' + email); } catch(e) {}
+        if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
+        _showFbConnectedPopup();
+      } else if (typeof fbAutoConnectWithRetry === 'function') {
+        fbAutoConnectWithRetry(1);
       }
-    );
-    const data = await res.json();
-    if (data.error) {
-      const msg = data.error.message || 'Login failed';
-      console.error('Firebase auto-login error:', msg);
-      if (typeof fbSetStatus === 'function') fbSetStatus('error', '❌ ' + msg, '');
-      if (msg.includes('EMAIL_NOT_FOUND') || msg.includes('INVALID_PASSWORD') || msg.includes('INVALID_LOGIN_CREDENTIALS')) {
+    } catch(err) {
+      fbConnected = false;
+      console.error('Firebase auto-connect failed:', err.message);
+      if (typeof fbSetStatus === 'function') fbSetStatus('error', '❌ ' + err.message, '');
+      if (err.message && (err.message.includes('EMAIL_NOT_FOUND') || err.message.includes('INVALID_PASSWORD') || err.message.includes('INVALID_LOGIN_CREDENTIALS'))) {
         if (typeof showToast === 'function') showToast(t('toastFbLoginFailedCheck'));
+      } else {
+        setTimeout(function(){ if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1); }, 3000);
       }
-      return;
     }
-
-    fbAuthToken = data.idToken;
-    fbAuthUser  = data.email;
-    fbSaveAuthToken(data.idToken, data.email, data.expiresIn, data.refreshToken);
-    const afEmail = document.getElementById('fb-auth-email');
-    const afPass  = document.getElementById('fb-auth-password');
-    if (afEmail) afEmail.value = email;
-    // SECURITY: don't mirror the real password into the visible field
-    if (afPass && !afPass.value) afPass.placeholder = '•••••••• (saved)';
-    const b2r = document.getElementById('fb-pass-saved-badge'); if (b2r) b2r.style.display = '';
-    if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
-    try { fbSetAuthStatus('✅ Auto-login: ' + data.email); } catch(e) {}
-
-    // Auto-connect — always try if login succeeded + config exists
-    // SESSION-only flag: clear on every fresh page load so app always auto-connects
-    localStorage.removeItem('ug_fb_user_disconnected');
-
-    // Auto-connect: delegate to fbConnect() which handles UID decode, token, pull/push
-    // (raw fetch was causing HTTP 401/403 because UID not yet decoded from token)
-    const hasConfig = !!(fbConfig && fbConfig.apiKey && fbConfig.dbUrl);
-    if (hasConfig) {
-      if (typeof fbSetStatus === 'function') fbSetStatus('connecting', currentLang === 'en' ? '🔄 Auto-connecting…' : '🔄 ઓટો-કનેક્ટ થઈ રહ્યું છે…', '');
-      setTimeout(async function() {
-        try {
-          await fbConnect();
-          if (fbConnected) {
-            _showFbConnectedPopup();
-          } else {
-            // fbConnect() returned but didn't connect - retry after delay
-            if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1);
-          }
-        } catch(err) {
-          fbConnected = false;
-          console.error('Firebase auto-connect failed:', err.message);
-          if (typeof fbSetStatus === 'function') fbSetStatus('error', '\xe2\x9d\x8c ' + err.message, '');
-          // Schedule retry via fbAutoConnectWithRetry
-          setTimeout(function() {
-            if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1);
-          }, 3000);
-        }
-      }, 600);
-    }
-  } catch(e) {
-    console.error('fbAutoLogin outer error:', e);
-    /* silent fail — user can connect manually from Settings */
-  }
+  }, 600);
 })();
 /* -- Firebase auto-connect after PIN unlock -- */
 async function fbAutoConnectAfterPin() {
@@ -15950,8 +16038,16 @@ function fbAutoConnectWithRetry(attempt) {
       if (typeof fbConnected !== 'undefined' && fbConnected) return; // already connected
       fbLoadConfig();
       if (!fbConfig || !fbConfig.apiKey || !fbConfig.dbUrl) return; // no config
-      var email    = localStorage.getItem('ug_fb_auth_email')    || '';
-      var password = localStorage.getItem('ug_fb_auth_password') || '';
+      var email = '', password = '';
+      try {
+        var _list = acctLoadList();
+        var _acct = _list.find(function(a){ return a.id === acctGetActiveId(); });
+        if (_acct && _acct.fbMode === 'custom' && _acct.fbCustomConfig) {
+          email = _acct.fbCustomConfig.email || ''; password = _acct.fbCustomConfig.password || '';
+        }
+      } catch(e) {}
+      if (!email)    email    = localStorage.getItem('ug_fb_auth_email')    || '';
+      if (!password) password = localStorage.getItem('ug_fb_auth_password') || '';
       if (!email || !password) return; // no credentials
       await fbConnect();
       if (fbConnected) {
@@ -20939,7 +21035,7 @@ function qa2ShowSuccess(name, amtFmt, typeLabel, typeIcon, typeColor, narr, date
      + Last successful sync time
      ══════════════════════════════════════════════════════ -->
 <div id="sync-status-banner" style="
-  position:fixed; bottom:0; left:0; right:0; z-index:88888;
+  position:fixed; bottom:0; left:0; right:0; z-index:150;
   background:rgba(26,16,8,0.92); color:#fff;
   font-family:'Noto Sans Gujarati','Noto Sans',sans-serif;
   font-size:12px; font-weight:600;
