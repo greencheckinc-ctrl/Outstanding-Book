@@ -11028,17 +11028,6 @@ async function fbEmailRegister() {
       localStorage.setItem('ug_fb_auth_email_main', email);
       localStorage.setItem('ug_fb_auth_password_main', password);
       fbSaveAuthToken(data.idToken, data.email, data.expiresIn, data.refreshToken);
-      // ── Back-sync to active account's fbEmail/fbPassword (same as Login) ──
-      // Without this, a freshly Registered email only lived in localStorage;
-      // the account record kept the old/blank fbEmail, and the next account
-      // load/switch would read that stale value back into localStorage,
-      // making the new email silently "revert" after a short while.
-      try {
-        const _sid2 = acctGetActiveId();
-        const _sl2  = acctLoadList();
-        const _sa2  = _sl2.find(a => a.id === _sid2);
-        if (_sa2) { _sa2.fbEmail = email; _sa2.fbPassword = password; acctSaveList(_sl2); }
-      } catch(e) {}
     }
 
     fbSetAuthStatus('✅ Register & Login સફળ: ' + data.email);
@@ -11943,7 +11932,13 @@ async function fbPullAllAccountsFromMain() {
   } catch(e) {}
 }
 let _fbConnectAutoRetryCount = 0; // circuit breaker: caps automatic re-login+reconnect loops (see catch block in fbConnect)
-async function fbConnect() {
+async function fbConnect(silent) {
+  // FIX: `silent` (default false/undefined) — true for background/automatic
+  // connect attempts (app just opened, PWA resume, background re-login,
+  // periodic retry). A background attempt must NEVER pop an error toast at
+  // the user — it should only update the quiet status indicator and let the
+  // background retry logic keep trying. Only an EXPLICIT user tap on a
+  // "Connect" button (silent left false) should ever show a failure toast.
   // ── If active account is Custom Firebase, use its config ──
   let effectiveCfg = fbConfig;
   let isCustomAcct = false;
@@ -12003,12 +11998,12 @@ async function fbConnect() {
       }
     } catch(authErr) {
       fbSetStatus('error', '❌ Auth failed: ' + authErr.message);
-      showToast(t('toastLoginFailed').replace('{msg}', authErr.message), 4000);
+      if (!silent) showToast(t('toastLoginFailed').replace('{msg}', authErr.message), 4000);
       return;
     }
   } else {
     fbSetStatus('error', '❌ Login કરો — Email/Password નથી');
-    showToast(t('toastFbSettingsFill'), 4000);
+    if (!silent) showToast(t('toastFbSettingsFill'), 4000);
     return;
   }
 
@@ -12082,7 +12077,7 @@ async function fbConnect() {
       if (typeof custBinAutoPurge === 'function') setTimeout(custBinAutoPurge, 1500);
     } catch(postConnectErr) {
       console.warn('[FB_CONNECT] Post-connect sync step failed (session still valid, will retry via watchdog/polling):', postConnectErr);
-      showToast((currentLang === 'en' ? '⚠️ Sync hiccup, retrying in background: ' : '⚠️ Sync ma tathi problem, background ma retry thashe: ') + postConnectErr.message, 4000);
+      if (!silent) showToast((currentLang === 'en' ? '⚠️ Sync hiccup, retrying in background: ' : '⚠️ Sync ma tathi problem, background ma retry thashe: ') + postConnectErr.message, 4000);
       // Make sure the periodic mechanisms are running even if the block above
       // threw partway through, so we still self-heal without another login.
       try { fbStartPolling(); } catch(e) {}
@@ -12111,7 +12106,10 @@ async function fbConnect() {
       fbSetStatus('error', _gu2
         ? '❌ વારંવાર જોડાણ નિષ્ફળ — "Reconnect" દબાવો'
         : '❌ Repeated connection failures — tap Reconnect manually');
-      showToast(_gu2 ? '⚠️ ઓટો-રિકનેક્ટ અટકાવ્યું — મેન્યુઅલી ફરી પ્રયત્ન કરો' : '⚠️ Auto-reconnect stopped — please retry manually', 6000);
+      // FIX: background/auto attempts never pop this — the app itself keeps
+      // working from local data regardless; only an explicit manual tap
+      // should ever be told to "please retry manually".
+      if (!silent) showToast(_gu2 ? '⚠️ ઓટો-રિકનેક્ટ અટકાવ્યું — મેન્યુઅલી ફરી પ્રયત્ન કરો' : '⚠️ Auto-reconnect stopped — please retry manually', 6000);
       return;
     }
 
@@ -12120,7 +12118,7 @@ async function fbConnect() {
       const rePassword = isCustomAcct ? (customAcct.fbCustomConfig && customAcct.fbCustomConfig.password || '') : (localStorage.getItem('ug_fb_auth_password') || '');
 
       if (reEmail && rePassword) {
-        showToast(t('toastSessionExpired'), 3000);
+        if (!silent) showToast(t('toastSessionExpired'), 3000);
         fbSetStatus('connecting', _gu2 ? '🔄 ફરી લૉગિન થઈ રહ્યા છે…' : 'Auto re-login…');
 
         // Step 1: Logout — clear old token
@@ -12163,25 +12161,26 @@ async function fbConnect() {
               fbUpdateAuthUI(true);
             }
 
-            showToast(t('toastReLoginSuccess'), 2000);
+            if (!silent) showToast(t('toastReLoginSuccess'), 2000);
             fbSetStatus('connecting', _gu2 ? '⏳ જોડાણ થઈ રહ્યું છે…' : 'Reconnecting…');
 
-            // Step 4: Reconnect Firebase
+            // Step 4: Reconnect Firebase (keep it silent if this whole cycle
+            // started as a silent/background attempt)
             setTimeout(async function() {
-              await fbConnect();
+              await fbConnect(silent);
             }, 800);
 
           } catch(reLoginErr) {
             fbSetStatus('error', (_gu2 ? '❌ ફરી લૉગિન નિષ્ફળ: ' : '❌ Re-login failed: ') + reLoginErr.message);
-            showToast(t('toastReLoginFailed').replace('{msg}', reLoginErr.message), 5000);
+            if (!silent) showToast(t('toastReLoginFailed').replace('{msg}', reLoginErr.message), 5000);
           }
         }, 600);
 
       } else {
-        showToast(t('toastConnFailed'), 5000);
+        if (!silent) showToast(t('toastConnFailed'), 5000);
       }
     } else {
-      showToast(t('toastLoginFailed').replace('{msg}', e.message), 4000);
+      if (!silent) showToast(t('toastLoginFailed').replace('{msg}', e.message), 4000);
     }
   }
 }
@@ -12189,23 +12188,8 @@ async function fbConnect() {
 // ── Central Auto Re-Login Helper ──
 // Call this anywhere HTTP 401/403 error comes automatically (polling, SSE, push, pull)
 let fbAutoReloginInProgress = false;
-// LOOP-BREAKER (fixes "Session expired / Re-login successful" popup looping
-// forever): fbAutoRelogin used to have zero cap or cooldown, so if the
-// underlying fetch kept failing for any reason (not just a truly expired
-// token), the polling/SSE/push callers above would re-trigger it every few
-// seconds forever, each time flashing both toasts. We now: (a) refuse to
-// re-fire within a short cooldown window of the last attempt, and (b) after
-// 3 attempts that don't end in a real connected state, back off for several
-// minutes and ask for a manual Reconnect instead of looping silently.
-let _fbAutoReloginFailCount     = 0;
-let _fbAutoReloginCoolDownUntil = 0;
-let _fbAutoReloginLastAttempt   = 0;
 async function fbAutoRelogin(triggeredBy) {
   if (fbAutoReloginInProgress) return; // already in progress
-  const _now = Date.now();
-  if (_now < _fbAutoReloginCoolDownUntil) return; // in cooldown — stay quiet, let normal polling try again later
-  if (_now - _fbAutoReloginLastAttempt < 15000) return; // never re-fire more than once per 15s
-  _fbAutoReloginLastAttempt = _now;
   fbAutoReloginInProgress = true;
 
   try {
@@ -12227,18 +12211,21 @@ async function fbAutoRelogin(triggeredBy) {
     const _isEn = typeof currentLang !== 'undefined' && currentLang === 'en';
 
     if (!reEmail || !rePassword) {
-      // No saved credentials — just disconnect, show message
+      // No saved credentials — just disconnect the background cloud sync
+      // quietly. This is NOT an app logout: local data and the app itself
+      // stay fully usable; only the (optional) Firebase Sync feature pauses
+      // until the user opens Settings and reconnects, or data syncs again
+      // automatically once credentials are available.
       fbConnected = false;
       fbSetStatus('error', _isEn ? '❌ Session expired — Please Login in Settings' : '❌ સત્ર પૂરું થયું — સેટિંગમાં લૉગિન કરો');
       fbUpdateUI();
       fbStopPolling(); fbStopDataStream(); fbStopDeletedStream();
-      showToast(t('toastSessionExpiredSettings'), 6000);
       fbAutoReloginInProgress = false;
       return;
     }
 
     fbSetStatus('connecting', _isEn ? '🔄 Auto re-login…' : '🔄 ફરી લૉગિન થઈ રહ્યા છે…');
-    showToast(t('toastSessionExpired'), 3000);
+    // (no toast — this is a silent background self-heal, not a user action)
 
     // Step 1 + 2: Re-login — routed through fbAuthEnsureToken, which tries
     // a cached refreshToken silently before ever touching signInWithPassword.
@@ -12266,30 +12253,12 @@ async function fbAutoRelogin(triggeredBy) {
       try { fbUpdateAuthUI(true); } catch(e) {}
     }
 
-    showToast(t('toastReLoginSuccess'), 2000);
+    // background auto re-login — no toast, no interruption to the user
 
-    // Step 4: Reconnect
+    // Step 4: Reconnect (silently — this whole flow is a background
+    // self-heal, never a user-initiated action)
     await new Promise(r => setTimeout(r, 800));
-    await fbConnect();
-
-    // ── LOOP-BREAKER: only trust this as a real recovery if fbConnect()
-    // actually ended up connected. If it silently ended up disconnected
-    // again (e.g. the real problem isn't the token at all — network/DB/
-    // rules — so re-login "succeeds" but the app is still stuck), count
-    // it as a failed cycle instead of quietly looping forever. ──
-    if (fbConnected) {
-      _fbAutoReloginFailCount = 0;
-    } else {
-      _fbAutoReloginFailCount++;
-      if (_fbAutoReloginFailCount >= 3) {
-        _fbAutoReloginCoolDownUntil = Date.now() + 3 * 60000; // 3 min cooldown
-        _fbAutoReloginFailCount = 0;
-        const _isEn2 = typeof currentLang !== 'undefined' && currentLang === 'en';
-        fbSetStatus('error', _isEn2
-          ? '❌ Repeated sync failures — pausing auto-retry, tap Reconnect'
-          : '❌ વારંવાર જોડાણ નિષ્ફળ — થોડીવાર રાહ જુઓ, પછી Reconnect દબાવો');
-      }
-    }
+    await fbConnect(true);
 
   } catch(err) {
     fbConnected = false;
@@ -12297,17 +12266,11 @@ async function fbAutoRelogin(triggeredBy) {
       ? '❌ Auto re-login failed: ' + err.message
       : '❌ ફરી લૉગિન નિષ્ફળ: ' + err.message);
     fbUpdateUI();
-    showToast((typeof currentLang !== 'undefined' && currentLang === 'en')
-      ? '❌ Auto re-login failed: ' + err.message
-      : '❌ ફરી લૉગિન નિષ્ફળ: ' + err.message, 5000);
-
-    // ── LOOP-BREAKER: same cap for the throw path (e.g. fbAuthEnsureToken
-    // itself failing — cooldown/quota errors, invalid credentials, etc.) ──
-    _fbAutoReloginFailCount++;
-    if (_fbAutoReloginFailCount >= 3) {
-      _fbAutoReloginCoolDownUntil = Date.now() + 3 * 60000;
-      _fbAutoReloginFailCount = 0;
-    }
+    // FIX: background auto re-login failing (e.g. transient network issue
+    // right when the app opened) must not pop an error at the user — the
+    // app and its local data keep working fine; sync will retry quietly on
+    // its own via the polling/watchdog loop.
+    console.warn('[fbAutoRelogin] background re-login failed (will keep retrying quietly):', err.message);
   } finally {
     fbAutoReloginInProgress = false;
   }
@@ -14447,7 +14410,7 @@ document.addEventListener('visibilitychange', async () => {
             if (fbConnected) return; // already reconnected by another path
             fbLoadConfig();
             if (!fbConfig || !fbConfig.apiKey) return;
-            await fbConnect();
+            await fbConnect(true); // silent — background PWA resume, not a user action
           } catch(e) {
             console.warn('[PWA] Auto-reconnect on resume failed:', e.message);
           }
@@ -14498,8 +14461,8 @@ window.addEventListener('DOMContentLoaded', () => {
 // Persist auto-connect state
 function fbConnect_orig() {}
 const _fbConnect = fbConnect;
-fbConnect = async function() {
-  await _fbConnect.call(this);
+fbConnect = async function(silent) {
+  await _fbConnect.call(this, silent);
   if (fbConnected) {
     localStorage.setItem('ug_fb_auto_connect', '1');
     localStorage.removeItem('ug_fb_user_disconnected'); // user re-connected manually
@@ -16158,7 +16121,7 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'teal', false);
 
   setTimeout(async function() {
     try {
-      await fbConnect();
+      await fbConnect(true); // silent — this is the automatic on-open background sync, not a user login action
       if (fbConnected) {
         try { fbSetAuthStatus('✅ Auto-login: ' + email); } catch(e) {}
         if (typeof fbUpdateAuthUI === 'function') fbUpdateAuthUI(true);
@@ -16168,13 +16131,19 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'teal', false);
       }
     } catch(err) {
       fbConnected = false;
-      console.error('Firebase auto-connect failed:', err.message);
+      // FIX (silent background sync): a failed *background* auto-login
+      // (app just opened, token refresh hiccup, temporary Firebase error,
+      // even a stale/invalid saved sync password) must NEVER surface as a
+      // scary error toast or interrupt the user — the app itself is not
+      // "logged out" just because the background data-sync couldn't
+      // authenticate right now. Local data + app-lock (PIN/Email) state is
+      // completely independent of this. So: log it quietly to console,
+      // update the (non-intrusive) status indicator only, and keep retrying
+      // in the background — for ALL error types, including bad saved
+      // sync-credentials — instead of giving up after one attempt.
+      console.error('Firebase auto-connect failed (silent, will keep retrying in background):', err.message);
       if (typeof fbSetStatus === 'function') fbSetStatus('error', '❌ ' + err.message, '');
-      if (err.message && (err.message.includes('EMAIL_NOT_FOUND') || err.message.includes('INVALID_PASSWORD') || err.message.includes('INVALID_LOGIN_CREDENTIALS'))) {
-        if (typeof showToast === 'function') showToast(t('toastFbLoginFailedCheck'));
-      } else {
-        setTimeout(function(){ if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1); }, 3000);
-      }
+      setTimeout(function(){ if (typeof fbAutoConnectWithRetry === 'function') fbAutoConnectWithRetry(1); }, 3000);
     }
   }, 600);
 })();
@@ -16186,7 +16155,7 @@ async function fbAutoConnectAfterPin() {
     fbLoadConfig();
     if (!fbConfig || !fbConfig.apiKey || !fbConfig.dbUrl) return;
     // fbConnect() does: get auth token -> connect DB -> pull/push -> start polling
-    await fbConnect();
+    await fbConnect(true); // silent — automatic reconnect right after unlocking, not a fresh manual login
     if (fbConnected) _showFbConnectedPopup();
   } catch(e) {
     console.error('fbAutoConnectAfterPin:', e.message);
@@ -16213,7 +16182,7 @@ function fbAutoConnectWithRetry(attempt) {
       if (!email)    email    = localStorage.getItem('ug_fb_auth_email')    || '';
       if (!password) password = localStorage.getItem('ug_fb_auth_password') || '';
       if (!email || !password) return; // no credentials
-      await fbConnect();
+      await fbConnect(true); // silent — background retry loop, not a user action
       if (fbConnected) {
         _showFbConnectedPopup();
       } else {
@@ -21433,7 +21402,7 @@ window.addEventListener('pageshow', function(event) {
         const userDisc = localStorage.getItem('ug_fb_user_disconnected') === '1';
         if (wasAuto && !userDisc && typeof fbConnect === 'function') {
           if (typeof fbLoadConfig === 'function') fbLoadConfig();
-          await fbConnect();
+          await fbConnect(true); // silent — background bfcache/pageshow reconnect, not a user action
         }
       }
     } catch(e) { console.warn('[PWA] pageshow sync error:', e); }
