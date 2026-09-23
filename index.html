@@ -11225,10 +11225,15 @@ function _fbResolveAccountLocation() {
 
   let effectiveUid = null;
   if (activeAcct && activeAcct.fbMode === 'custom') {
-    effectiveUid = activeAcct.customUid || null;
-    if (!effectiveUid && cfg.email) {
-      effectiveUid = cfg.email.replace(/[.#$\[\]@]/g, '_');
-    }
+    // FIX (shared multi-user data — Custom Firebase accounts): previously
+    // this used the REAL per-login UID (activeAcct.customUid), so a Custom
+    // Firebase account behaved just like the old bug — every different
+    // email that logged into this custom account got its OWN isolated data
+    // node. Route it through the same fixed shared UID as the main/shared
+    // mode, so any authenticated email on this Custom Firebase account also
+    // lands on the one shared data node (matches the Realtime Database
+    // rule, which now allows any "auth != null" at that fixed path).
+    effectiveUid = (activeAcct.customToken || activeAcct.customUid) ? FB_SHARED_DATA_UID : null;
   } else {
     const uid = fbGetUID();
     effectiveUid = uid || (fbAuthUser ? fbAuthUser.replace(/[.#$\[\]@]/g, '_') : null);
@@ -18865,7 +18870,7 @@ async function acctFetchSettingsFromFirebase(targetId) {
       const auth    = acct.customToken
         ? 'auth=' + encodeURIComponent(acct.customToken)
         : 'auth=' + encodeURIComponent(cfg.apiKey);
-      const uid     = acct.customUid || (cfg.email ? cfg.email.replace(/[.#$\[\]@]/g, '_') : null);
+      const uid     = (acct.customToken || acct.customUid) ? FB_SHARED_DATA_UID : (cfg.email ? cfg.email.replace(/[.#$\[\]@]/g, '_') : null); // FIX: shared data node for any authenticated email
       const userSeg = uid ? uid + '/' : '';
       const cfgUrl  = base + '/' + p + '/' + userSeg + 'account_config.json?' + auth;
 
@@ -18943,7 +18948,7 @@ async function acctPushCustomConfigToFirebase(targetId) {
     const auth    = acct.customToken
       ? 'auth=' + encodeURIComponent(acct.customToken)
       : 'auth=' + encodeURIComponent(cfg.apiKey);
-    const uid     = acct.customUid || (cfg.email ? cfg.email.replace(/[.#$\[\]@]/g, '_') : null);
+    const uid     = (acct.customToken || acct.customUid) ? FB_SHARED_DATA_UID : (cfg.email ? cfg.email.replace(/[.#$\[\]@]/g, '_') : null); // FIX: shared data node for any authenticated email
     const userSeg = uid ? uid + '/' : '';
     const cfgUrl  = base + '/' + p + '/' + userSeg + 'account_config.json?' + auth;
 
