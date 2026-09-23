@@ -13193,31 +13193,41 @@ function _fbSyncToast(msg) { /* no-op: sync popup removed */ }
 const FB_DB_SECRET_KEY = 'ug_fb_db_secret';
 
 /* ── Helper: get the Firebase UID from the ID token (JWT) ── */
+// FIX (shared multi-user data): previously every different email that
+// logged in got its OWN separate/isolated Firebase UID (from decoding its
+// own JWT), so two different staff emails never saw the same data even
+// though they used the same app. Per request, multiple different
+// authenticated emails must all read/write ONE shared data node. So the
+// "UID" used for the storage PATH is now a fixed constant — any registered
+// email that successfully authenticates gets routed to this same node.
+// Genuine access control still happens via Firebase Authentication itself
+// (only emails you've registered in Firebase can log in at all) and via the
+// Realtime Database rule, which must now be "auth != null" (see
+// fbBuildUserRules below) rather than an auth.uid equality check.
+const FB_SHARED_DATA_UID = 'qHMPybNtBTbzcVlpUeqEDMKCFjB2';
 function fbGetUID() {
-  const token = fbAuthToken;
-  if (!token) {
+  if (!fbAuthToken) {
     // Fallback: localStorage cached UID
     return localStorage.getItem('ug_fb_uid') || null;
   }
-  try {
-    const payload = token.split('.')[1];
-    const padded  = payload + '='.repeat((4 - payload.length % 4) % 4);
-    const decoded = JSON.parse(atob(padded.replace(/-/g, '+').replace(/_/g, '/')));
-    const uid = decoded.user_id || decoded.sub || null;
-    if (uid) localStorage.setItem('ug_fb_uid', uid); // cache for next time
-    return uid;
-  } catch(e) { return localStorage.getItem('ug_fb_uid') || null; }
+  // Any valid logged-in session (any authenticated email) resolves to the
+  // SAME shared path segment, so all authenticated users see the same data.
+  localStorage.setItem('ug_fb_uid', FB_SHARED_DATA_UID); // cache for next time
+  return FB_SHARED_DATA_UID;
 }
 
-/* ── Build per-user scoped rules JSON string ── */
+/* ── Build shared-access rules JSON string ──
+   Any authenticated user (any registered email) may read/write this one
+   shared path — data is deliberately shared across all logged-in emails,
+   not isolated per-login. */
 function fbBuildUserRules(uid, path) {
   const p = path || 'ugharani';
   return JSON.stringify({
     rules: {
       [p]: {
         [uid]: {
-          ".read":  "auth != null && auth.uid === '" + uid + "'",
-          ".write": "auth != null && auth.uid === '" + uid + "'"
+          ".read":  "auth != null",
+          ".write": "auth != null"
         }
       },
       ".read":  false,
