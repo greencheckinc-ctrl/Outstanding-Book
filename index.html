@@ -11574,24 +11574,55 @@ function _fbMergeAccountData(remoteCustomers, remoteEntries, targetCustomers, ta
   // that push considered "not deleted" — if an id claimed as deleted also
   // appears as a live record in that SAME payload, or in what we already
   // hold locally as live, trust the live record and drop the tombstone
-  // instead of trusting stale delete lists. This applies both when
-  // unioning remote's tombstones in below, and to whatever we already had
-  // in our own local tombstone lists before this merge even started.
+  // instead of trusting stale delete lists.
+  //
+  // GRACE PERIOD (regression fix): the check above alone caused the
+  // OPPOSITE bug — deleting an entry RIGHT NOW could get instantly undone,
+  // because a Realtime/poll event carrying data from a split-second BEFORE
+  // the delete (still "live" in that snapshot) would race in and look
+  // exactly like "restored elsewhere". A genuine cross-device restore and a
+  // brand-new local delete are indistinguishable by content alone — only
+  // TIME tells them apart: a real stale-tombstone case is always at least
+  // minutes/hours/days old, while a race from in-flight sync data resolves
+  // within a few seconds. So: only ever drop a tombstone this way once it
+  // has existed for at least RESTORE_GRACE_MS — a fresh delete is fully
+  // protected during its own propagation window, while an actually-stale
+  // tombstone still gets correctly cleaned up shortly after.
+  const RESTORE_GRACE_MS = 30000; // 30s
+  const _now = Date.now();
+  let _custBinDeletedAt = {}, _entBinDeletedAt = {};
+  try { (JSON.parse(localStorage.getItem('ug_customer_bin') || '[]')).forEach(b => { if (b && b.id) _custBinDeletedAt[b.id] = (typeof b.deletedAt === 'number') ? b.deletedAt : Date.parse(b.deletedAt || '') || 0; }); } catch(e) {}
+  try { (typeof entryBinLoad === 'function' ? entryBinLoad() : []).forEach(b => { if (b && b.entry && b.entry.id) _entBinDeletedAt[b.entry.id] = Date.parse(b.deletedAt || '') || 0; }); } catch(e) {}
+  const _custTombstoneIsOldEnough = (id) => {
+    const dAt = _custBinDeletedAt[id];
+    return dAt ? (_now - dAt) > RESTORE_GRACE_MS : true; // no bin record found → not a fresh delete on this device, safe to evaluate
+  };
+  const _entTombstoneIsOldEnough = (id) => {
+    const dAt = _entBinDeletedAt[id];
+    return dAt ? (_now - dAt) > RESTORE_GRACE_MS : true;
+  };
+
   const _liveRemoteCustIds = new Set((remoteCustomers || []).map(c => c.id));
   const _liveLocalCustIds  = new Set((targetCustomers || []).map(c => c.id));
-  deletedCusts = deletedCusts.filter(id => !_liveRemoteCustIds.has(id) && !_liveLocalCustIds.has(id));
+  deletedCusts = deletedCusts.filter(id => {
+    if (!_custTombstoneIsOldEnough(id)) return true; // too fresh — keep the tombstone no matter what
+    return !(_liveRemoteCustIds.has(id) || _liveLocalCustIds.has(id));
+  });
   Object.keys(deletedEnts).forEach(custId => {
     const liveIds = new Set([
       ...((remoteEntries && remoteEntries[custId]) || []).map(e => e.id),
       ...((targetEntries && targetEntries[custId]) || []).map(e => e.id)
     ]);
-    deletedEnts[custId] = (deletedEnts[custId] || []).filter(id => !liveIds.has(id));
+    deletedEnts[custId] = (deletedEnts[custId] || []).filter(id => {
+      if (!_entTombstoneIsOldEnough(id)) return true;
+      return !liveIds.has(id);
+    });
   });
 
   // ── Merge remote deleted IDs into local so THIS device also knows what was deleted ──
   if (Array.isArray(remoteDeletedCusts) && remoteDeletedCusts.length) {
     remoteDeletedCusts.forEach(id => {
-      if (_liveRemoteCustIds.has(id) || _liveLocalCustIds.has(id)) return; // restored elsewhere — don't resurrect the tombstone
+      if (_custTombstoneIsOldEnough(id) && (_liveRemoteCustIds.has(id) || _liveLocalCustIds.has(id))) return; // restored elsewhere — don't resurrect the tombstone
       if (!deletedCusts.includes(id)) deletedCusts.push(id);
     });
     try { localStorage.setItem('ug_deleted_customers', JSON.stringify(deletedCusts)); } catch(e) {}
@@ -11604,7 +11635,7 @@ function _fbMergeAccountData(remoteCustomers, remoteEntries, targetCustomers, ta
         ...((targetEntries && targetEntries[custId]) || []).map(e => e.id)
       ]);
       (remoteDeletedEnts[custId] || []).forEach(id => {
-        if (liveIds.has(id)) return; // restored elsewhere — don't resurrect the tombstone
+        if (_entTombstoneIsOldEnough(id) && liveIds.has(id)) return; // restored elsewhere — don't resurrect the tombstone
         if (!deletedEnts[custId].includes(id)) deletedEnts[custId].push(id);
       });
     });
